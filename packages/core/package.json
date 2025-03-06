@@ -1,8 +1,12 @@
 {
   "name": "bluefox-email",
-  "description": "The API for the bluefox email library",
-  "version": "1.0.0",
+  "description": "A library for sending emails from Bluefox email",
+  "version": "0.0.0",
   "private": false,
+  "keywords": [
+    "bluefox",
+    "email"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -19,8 +23,5 @@
     "@types/node": "^22.13.9",
     "typescript": "5.8.2"
   },
-  "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  }
+  "dependencies": {}
 }
