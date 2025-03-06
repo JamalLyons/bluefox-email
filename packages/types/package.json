@@ -1,0 +1,21 @@
+{
+  "name": "@bluefox-email/types",
+  "description": "Exports types for the bluefox email library",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@bluefox-email/typescript-config": "workspace:*",
+    "@types/node": "^22.13.9",
+    "typescript": "5.8.2"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
