@@ -1,0 +1,28 @@
+{
+  "name": "@bluefox-email/convex",
+  "description": "Convex component for the bluefox email library",
+  "version": "0.0.0",
+  "private": false,
+  "keywords": [
+    "bluefox",
+    "email",
+    "convex"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./src/lib.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@bluefox-email/typescript-config": "workspace:*",
+    "@bluefox-email/utils": "workspace:*",
+    "@bluefox-email/types": "workspace:*",
+    "@types/node": "^22.13.9",
+    "typescript": "5.8.2"
+  },
+  "dependencies": {}
+}
