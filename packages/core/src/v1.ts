@@ -7,8 +7,6 @@ export class BluefoxClient extends V1.BaseBluefoxClient {
 }
 
 class BluefoxSubscriber extends V1.BluefoxSubscriber {
-  protected config: V1.Config;
-
   constructor(config: V1.Config) {
     super(config);
     this.config = config;

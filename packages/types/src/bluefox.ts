@@ -7,11 +7,11 @@ export namespace V1 {
 
     constructor(config: Config, subscriber: BluefoxSubscriber) {
       this.config = config;
+      this.subscriber = subscriber;
+
       if (!this.config.BLUEFOX_API_KEY) {
         throw new Error("BLUEFOX_API_KEY is required");
       }
-
-      this.subscriber = subscriber;
     }
 
     getSubscriber(): BluefoxSubscriber {
