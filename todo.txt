@@ -1,0 +1,6 @@
+- I need to find out what type of json responce data each endpoint returns 
+so i can type that. I might have to do this manually but I want to ask the 
+bluefox team first before that...
+
+- Add a console/file based logger for debugging in the utils package
+- test the library using real emails.

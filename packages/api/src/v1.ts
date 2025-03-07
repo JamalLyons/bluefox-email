@@ -27,8 +27,8 @@ export namespace V1 {
   export type Result<T> = Ok<T> | Err;
 
   export enum BluefoxEndpoints {
-    subscriberLists = "https://api.bluefox.email/v1/subscriber-lists",
-    sendTriggered = "https://api.bluefox.email/v1/send-triggered",
+    subscriberLists = "/subscriber-lists",
+    sendTriggered = "/send-triggered",
   }
 
   export enum BluefoxErrorCodes {
@@ -59,6 +59,8 @@ export namespace V1 {
     }: RequestArguments): Promise<
       Result<{ data: Json; status: number; timestamp: number }>
     > {
+      console.debug(`[Bluefox REQUEST] ${method} ${path}`);
+
       const controller = new AbortController();
       const timeoutId = setTimeout(
         () => controller.abort(),

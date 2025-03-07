@@ -1,7 +1,7 @@
 {
   "name": "@bluefox-email/convex",
   "description": "Convex component for the bluefox email library",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": false,
   "keywords": [
     "bluefox",
