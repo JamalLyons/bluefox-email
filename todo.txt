@@ -4,3 +4,4 @@ bluefox team first before that...
 
 - Add a console/file based logger for debugging in the utils package
 - test the library using real emails.
+- add some kind of license to the package (need to ask bluefox team first maybe?)
