@@ -1,18 +1,18 @@
 /** Version 1 of the Bluefox API https://bluefox.email/docs/api/ */
 export namespace V1 {
   export interface BluefoxContext {
-    config: Config;
+    config: BluefoxClientConfig;
     readonly baseUrl: string;
   }
 
-  export type Config = {
+  export type BluefoxClientConfig = {
     apiKey: string;
     debug?: boolean;
     requestTimeout?: number;
     maxRetries?: number;
   };
 
-  export type RequestArguments = {
+  type RequestArguments = {
     path: string;
     method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
     body: string;

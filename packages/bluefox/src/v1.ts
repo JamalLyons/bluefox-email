@@ -3,7 +3,7 @@ import { V1 } from "@bluefox-email/api/v1";
 export class BluefoxClient extends V1.BluefoxModule {
   public readonly subscriber: BluefoxSubscriber;
 
-  constructor(config: V1.Config) {
+  constructor(config: V1.BluefoxClientConfig) {
     const context: V1.BluefoxContext = {
       config,
       baseUrl: "https://api.bluefox.email/v1",
@@ -21,7 +21,14 @@ class BluefoxSubscriber extends V1.BluefoxModule {
     super(context);
   }
 
-  /** https://bluefox.email/docs/api/subscriber-list-management#subscribe */
+  /**
+   * Adds an email to a subscriber list
+   * @param subscriberListId The ID of the subscriber list
+   * @param name The name of the subscriber
+   * @param email The email of the subscriber
+   *
+   * https://bluefox.email/docs/api/subscriber-list-management#subscribe
+   */
   async add(subscriberListId: string, name: string, email: string) {
     if (!subscriberListId || !name || !email) {
       throw new V1.BluefoxError(
@@ -37,10 +44,10 @@ class BluefoxSubscriber extends V1.BluefoxModule {
     });
 
     if (result.ok) {
-      console.log(`Result: ${result.value}`);
-    } else {
-      console.log(`Error: ${result.error}`);
+      return result.value;
     }
+
+    return result.error;
   }
 
   /** https://bluefox.email/docs/api/subscriber-list-management#unsubscribe */
