@@ -188,10 +188,4 @@ export namespace V1 {
       this.status = status || BluefoxErrorCodes.SERVER_ERROR;
     }
   }
-
-  export class BluefoxArgumentError extends BluefoxError {
-    public constructor(message: string) {
-      super(message, BluefoxErrorCodes.BAD_REQUEST);
-    }
-  }
 }
