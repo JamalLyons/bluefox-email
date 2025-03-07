@@ -1,6 +1,6 @@
 {
-  "name": "@bluefox-email/types",
-  "description": "Exports types for the bluefox email library",
+  "name": "@bluefox-email/api",
+  "description": "API for the bluefox email library",
   "version": "1.0.0",
   "private": true,
   "exports": {

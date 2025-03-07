@@ -18,47 +18,47 @@ importers:
         specifier: 5.8.2
         version: 5.8.2
 
+  packages/api:
+    devDependencies:
+      '@bluefox-email/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^22.13.9
+        version: 22.13.9
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
+
+  packages/bluefox:
+    devDependencies:
+      '@bluefox-email/api':
+        specifier: workspace:*
+        version: link:../api
+      '@bluefox-email/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@bluefox-email/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@types/node':
+        specifier: ^22.13.9
+        version: 22.13.9
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
+
   packages/convex:
     devDependencies:
-      '@bluefox-email/types':
+      '@bluefox-email/api':
         specifier: workspace:*
-        version: link:../types
+        version: link:../api
       '@bluefox-email/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@bluefox-email/utils':
         specifier: workspace:*
         version: link:../utils
-      '@types/node':
-        specifier: ^22.13.9
-        version: 22.13.9
-      typescript:
-        specifier: 5.8.2
-        version: 5.8.2
-
-  packages/core:
-    devDependencies:
-      '@bluefox-email/types':
-        specifier: workspace:*
-        version: link:../types
-      '@bluefox-email/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      '@bluefox-email/utils':
-        specifier: workspace:*
-        version: link:../utils
-      '@types/node':
-        specifier: ^22.13.9
-        version: 22.13.9
-      typescript:
-        specifier: 5.8.2
-        version: 5.8.2
-
-  packages/types:
-    devDependencies:
-      '@bluefox-email/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.9
@@ -70,9 +70,9 @@ importers:
 
   packages/utils:
     devDependencies:
-      '@bluefox-email/types':
+      '@bluefox-email/api':
         specifier: workspace:*
-        version: link:../types
+        version: link:../api
       '@bluefox-email/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
