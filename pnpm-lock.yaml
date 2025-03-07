@@ -26,9 +26,6 @@ importers:
       '@bluefox-email/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
-      '@bluefox-email/utils':
-        specifier: workspace:*
-        version: link:../uitls
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.9
@@ -44,9 +41,6 @@ importers:
       '@bluefox-email/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
-      '@bluefox-email/utils':
-        specifier: workspace:*
-        version: link:../uitls
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.9
@@ -55,13 +49,6 @@ importers:
         version: 5.8.2
 
   packages/types:
-    dependencies:
-      react:
-        specifier: ^19.0.0
-        version: 19.0.0
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.0.0(react@19.0.0)
     devDependencies:
       '@bluefox-email/typescript-config':
         specifier: workspace:*
@@ -75,25 +62,6 @@ importers:
 
   packages/typescript-config: {}
 
-  packages/uitls:
-    dependencies:
-      react:
-        specifier: ^19.0.0
-        version: 19.0.0
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.0.0(react@19.0.0)
-    devDependencies:
-      '@bluefox-email/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      '@types/node':
-        specifier: ^22.13.9
-        version: 22.13.9
-      typescript:
-        specifier: 5.8.2
-        version: 5.8.2
-
 packages:
 
   '@types/node@22.13.9':
@@ -103,18 +71,6 @@ packages:
     resolution: {integrity: sha512-QQtaxnoDJeAkDvDKWCLiwIXkTgRhwYDEQCghU9Z6q03iyek/rxRh/2lC3HB7P8sWT2xC/y5JDctPLBIGzHKbhw==}
     engines: {node: '>=14'}
     hasBin: true
-
-  react-dom@19.0.0:
-    resolution: {integrity: sha512-4GV5sHFG0e/0AD4X+ySy6UJd3jVl1iNsNHdpad0qhABJ11twS3TTBnseqsKurKcsNqCEFeGL3uLpVChpIO3QfQ==}
-    peerDependencies:
-      react: ^19.0.0
-
-  react@19.0.0:
-    resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
-    engines: {node: '>=0.10.0'}
-
-  scheduler@0.25.0:
-    resolution: {integrity: sha512-xFVuu11jh+xcO7JOAGJNOXld8/TcEHK/4CituBUeUb5hqxJLj9YuemAEuvm9gQ/+pgXYfbQuqAkiYu+u7YEsNA==}
 
   turbo-darwin-64@2.4.4:
     resolution: {integrity: sha512-5kPvRkLAfmWI0MH96D+/THnDMGXlFNmjeqNRj5grLKiry+M9pKj3pRuScddAXPdlxjO5Ptz06UNaOQrrYGTx1g==}
@@ -165,15 +121,6 @@ snapshots:
       undici-types: 6.20.0
 
   prettier@3.5.3: {}
-
-  react-dom@19.0.0(react@19.0.0):
-    dependencies:
-      react: 19.0.0
-      scheduler: 0.25.0
-
-  react@19.0.0: {}
-
-  scheduler@0.25.0: {}
 
   turbo-darwin-64@2.4.4:
     optional: true
