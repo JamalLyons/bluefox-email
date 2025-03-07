@@ -1,42 +1,106 @@
 /** Version 1 of the Bluefox API https://bluefox.email/docs/api/ */
 export namespace V1 {
-  export interface BluefoxContext {
-    config: BluefoxClientConfig;
-    readonly baseUrl: string;
-  }
-
+  /**
+   * A configuration object for initializing a BluefoxClient.
+   *
+   * @example
+   * const bluefox = new BluefoxClient({
+   *   apiKey: "your-api-key",
+   *   debug: true,
+   *   requestTimeout: 30_000,
+   *   maxRetries: 5,
+   * });
+   */
   export type BluefoxClientConfig = {
+    /** The API key for the Bluefox API */
     apiKey: string;
+    /** Whether to enable debug logging */
     debug?: boolean;
+    /** The maximum time in milliseconds to wait for a request to complete */
     requestTimeout?: number;
+    /** The maximum number of times to retry a request before giving up */
     maxRetries?: number;
   };
 
-  type RequestArguments = {
-    path: string;
-    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-    body: string;
-    headers?: Record<string, string>;
-  };
+  /** A context object shared between all Bluefox API modules. */
+  export interface BluefoxContext {
+    /** The configuration for the BluefoxClient */
+    config: BluefoxClientConfig;
+    /** The base URL for all API requests */
+    readonly baseUrl: string;
+  }
 
+  /**
+   * A type representing a JSON object.
+   */
   export type Json = Record<string, unknown>;
 
-  type Ok<T> = { ok: true; value: T };
-  type Err = { ok: false; error: BluefoxError };
-
+  /**
+   * A type representing the result of a request to the Bluefox API.
+   *
+   * @example
+   * const result: Result<{ data: Json; status: number; timestamp: number }> = {
+   *   ok: true,
+   *   value: {
+   *     data: { foo: "bar" },
+   *     status: 200,
+   *     timestamp: 1678902345,
+   *   },
+   * };
+   */
   export type Result<T> = Ok<T> | Err;
 
-  export enum BluefoxEndpoints {
-    subscriberLists = "/subscriber-lists",
-    sendTriggered = "/send-triggered",
+  /**
+   * A type representing a successful response from the Bluefox API.
+   *
+   * @example
+   * const result: Ok<{ data: Json; status: number; timestamp: number }> = {
+   *   ok: true,
+   *   value: {
+   *     data: { foo: "bar" },
+   *     status: 200,
+   *     timestamp: 1678902345,
+   *   },
+   * };
+   */
+  export type Ok<T> = { ok: true; value: T };
+
+  /**
+   * A type representing a failed response from the Bluefox API.
+   *
+   * @example
+   * const result: Err = {
+   *   ok: false,
+   *   error: new BluefoxError("Failed to parse JSON response", 400),
+   * };
+   */
+  export type Err = { ok: false; error: BluefoxError };
+
+  /**
+   * A class that represents an error that occurred when using the Bluefox API.
+   *
+   * @example
+   * throw new BluefoxError("There was an error sending the email", 500);
+   */
+  export class BluefoxError extends Error {
+    /** The HTTP status code of the error */
+    public readonly status: number;
+
+    /**
+     * Create a new BluefoxError
+     *
+     * @param message The error message
+     * @param status The HTTP status code of the error
+     */
+    public constructor(message: string, status?: number) {
+      super(message);
+      this.status = status || 500;
+    }
   }
 
-  export enum BluefoxErrorCodes {
-    BAD_REQUEST = 400,
-    NOT_FOUND = 404,
-    SERVER_ERROR = 500,
-  }
-
+  /**
+   * A base class for all Bluefox API modules.
+   */
   export abstract class BluefoxModule {
     /** Shared state between all Bluefox API modules */
     protected context: BluefoxContext;
@@ -51,14 +115,26 @@ export namespace V1 {
       this.context = context;
     }
 
+    /**
+     * A helper method to make a request to the Bluefox API.
+     *
+     * @param path The path of the API endpoint
+     * @param method The HTTP method to use
+     * @param headers The headers to include with the request
+     * @param body The body of the request
+     * @returns A result object with the response data, status, and timestamp
+     */
     protected async request({
       path,
       method,
       headers = {},
       body,
-    }: RequestArguments): Promise<
-      Result<{ data: Json; status: number; timestamp: number }>
-    > {
+    }: {
+      path: string;
+      method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+      body: string;
+      headers?: Record<string, string>;
+    }): Promise<Result<{ data: Json; status: number; timestamp: number }>> {
       console.debug(`[Bluefox REQUEST] ${method} ${path}`);
 
       const controller = new AbortController();
@@ -169,25 +245,14 @@ export namespace V1 {
     }
   }
 
-  /**
-   * A class that represents an error that occurred when using the Bluefox API
-   *
-   * @example
-   * throw new BluefoxError("There was an error sending the email", 500);
-   */
-  export class BluefoxError extends Error {
-    /** The HTTP status code of the error */
-    public readonly status: number;
+  export enum BluefoxEndpoints {
+    subscriberLists = "/subscriber-lists",
+    sendTriggered = "/send-triggered",
+  }
 
-    /**
-     * Create a new BluefoxError
-     *
-     * @param message The error message
-     * @param status The HTTP status code of the error
-     */
-    public constructor(message: string, status?: number) {
-      super(message);
-      this.status = status || BluefoxErrorCodes.SERVER_ERROR;
-    }
+  export enum BluefoxErrorCodes {
+    BAD_REQUEST = 400,
+    NOT_FOUND = 404,
+    SERVER_ERROR = 500,
   }
 }
