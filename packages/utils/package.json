@@ -1,6 +1,6 @@
 {
-  "name": "@bluefox-email/convex",
-  "description": "Convex component for the bluefox email library",
+  "name": "@bluefox-email/utils",
+  "description": "Utils for the bluefox email library",
   "version": "0.0.0",
   "private": false,
   "keywords": [
@@ -20,7 +20,6 @@
   "devDependencies": {
     "@bluefox-email/typescript-config": "workspace:*",
     "@bluefox-email/types": "workspace:*",
-    "@bluefox-email/utils": "workspace:*",
     "@types/node": "^22.13.9",
     "typescript": "5.8.2"
   },

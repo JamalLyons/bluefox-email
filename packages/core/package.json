@@ -19,6 +19,7 @@
   "devDependencies": {
     "@bluefox-email/typescript-config": "workspace:*",
     "@bluefox-email/types": "workspace:*",
+    "@bluefox-email/utils": "workspace:*",
     "@types/node": "^22.13.9",
     "typescript": "5.8.2"
   },
