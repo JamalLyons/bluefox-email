@@ -1,4 +1,4 @@
-/** Version 1 of the Bluefox API */
+/** Version 1 of the Bluefox API https://bluefox.email/docs/api/ */
 export namespace V1 {
   export interface BluefoxContext {
     config: Config;
@@ -38,7 +38,7 @@ export namespace V1 {
   }
 
   export abstract class BluefoxModule {
-    /** Shared state between all Bluefox API classes */
+    /** Shared state between all Bluefox API modules */
     protected context: BluefoxContext;
     /** The maximum number of retries for a request */
     private readonly MAX_RETRIES: number;
