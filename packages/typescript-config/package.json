@@ -7,7 +7,8 @@
     "access": "public"
   },
   "files": [
-    "base.json"
+    "base.json",
+    "LICENSE"
   ],
   "main": "./base.json",
   "types": "./base.json",
