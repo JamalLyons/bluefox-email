@@ -28,6 +28,7 @@ build
 /packages/*/dist/index.cjs
 /packages/*/dist/index.js
 /packages/*/dist/index.d.cts
+/packages/test/dist
 
 # Misc
 .DS_Store
