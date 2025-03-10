@@ -74,8 +74,6 @@ async function testBluefox() {
   }
 }
 
-console.log(`RUNNING testBluefox() next:`);
-
 // Add proper error handling for the main function
 testBluefox().catch((error: unknown) => {
   console.error("Fatal error in testBluefox:", error);
