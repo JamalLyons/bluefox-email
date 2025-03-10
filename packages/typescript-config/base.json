@@ -19,8 +19,6 @@
     "target": "ES2022",
     "lib": ["es2022", "DOM", "DOM.Iterable"],
     "sourceMap": true,
-    "incremental": true,
-    "noEmit": false,
     "resolveJsonModule": true,
     "stripInternal": true,
     "noImplicitReturns": true,
