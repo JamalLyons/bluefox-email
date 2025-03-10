@@ -1,37 +1,17 @@
-import "dotenv/config";
 import { BluefoxClient } from "bluefox-email";
 import { DEBUG, ERROR } from "@bluefox-email/utils";
+import { getEnv } from "./utils.js";
 
-let API_KEY: string;
-
-if (!process.env.BLUEFOX_API_KEY) {
-  throw new Error("ENV BLUEFOX_API_KEY REQUIRED FOR THIS TEST");
-} else {
-  API_KEY = process.env.BLUEFOX_API_KEY;
-}
-
-let SUBSCRIPTION_LIST: string;
-
-if (!process.env.SUBSCRIBER_LIST) {
-  throw new Error("ENV SUBSCRIBER_LIST REQUIRED FOR THIS TEST");
-} else {
-  SUBSCRIPTION_LIST = process.env.SUBSCRIBER_LIST;
-}
-
-let EMAIL_ADDRESS: string;
-
-if (!process.env.EMAIL_ADDRESS) {
-  throw new Error("ENV EMAIL_ADDRESS REQUIRED FOR THIS TEST");
-} else {
-  EMAIL_ADDRESS = process.env.EMAIL_ADDRESS;
-}
+const SUBSCRIPTION_LIST = getEnv("SUBSCRIPTION_LIST");
+const EMAIL_ADDRESS = getEnv("EMAIL_ADDRESS");
+const TRANSACTIONAL_ID = getEnv("TRANSACTIONAL_ID");
 
 const client = new BluefoxClient({
-  apiKey: API_KEY,
-  debug: true,
+  apiKey: getEnv("API_KEY"),
+  debug: false,
 });
 
-async function testBluefox() {
+async function testSubscriptionManagement() {
   try {
     DEBUG(
       "TestConfig",
@@ -39,14 +19,14 @@ async function testBluefox() {
         subscriptionList: SUBSCRIPTION_LIST,
         emailAddress: EMAIL_ADDRESS,
       },
-      10,
+      10
     );
 
     // Test subscriber management
     const addResult = await client.subscriber.add(
       SUBSCRIPTION_LIST,
       "Jamal Lyons",
-      EMAIL_ADDRESS,
+      EMAIL_ADDRESS
     );
 
     if (addResult.ok) {
@@ -57,11 +37,30 @@ async function testBluefox() {
       const pauseResult = await client.subscriber.pause(
         SUBSCRIPTION_LIST,
         EMAIL_ADDRESS,
-        new Date(Date.now() + 24 * 60 * 60 * 1000), // Pause for 24 hours
+        new Date(Date.now() + 24 * 60 * 60 * 1000) // Pause for 24 hours
       );
 
       if (pauseResult.ok) {
         DEBUG("SubscriberPaused", pauseResult.value.data, 10);
+
+        const activeResult = await client.subscriber.activate(
+          SUBSCRIPTION_LIST,
+          EMAIL_ADDRESS
+        );
+
+        if (activeResult.ok) {
+          const activate = activeResult.value.data;
+          DEBUG("SubscriberActivated", activate, 10);
+        } else {
+          ERROR("ActiveSubscriberError", {
+            error: activeResult.error,
+            details: {
+              list: SUBSCRIPTION_LIST,
+              email: EMAIL_ADDRESS,
+              response: activeResult.error.details,
+            },
+          });
+        }
       } else {
         ERROR("PauseSubscriberError", {
           error: pauseResult.error,
@@ -82,56 +81,79 @@ async function testBluefox() {
           response: addResult.error.details,
         },
       });
-      return;
     }
-
-    // Test sending a transactional email
-    // const emailResult = await client.email.sendTransactional({
-    //   to: "test@example.com",
-    //   transactionalId: "welcome-email",
-    //   data: {
-    //     name: "Test User",
-    //     welcomeMessage: "Welcome to our service!",
-    //   },
-    //   attachments: [
-    //     {
-    //       fileName: "welcome.txt",
-    //       content: Buffer.from("Welcome to our service!").toString("base64"),
-    //     },
-    //   ],
-    // });
-
-    // if (emailResult.ok) {
-    //   const email = emailResult.value.data;
-    //   DEBUG("EmailSent", {
-    //     email,
-    //     status: email.status,
-    //     deliveredAt: email.deliveredAt ? new Date(email.deliveredAt).toLocaleString() : null
-    //   }, 10);
-    // } else {
-    //   ERROR("SendEmailError", {
-    //     error: emailResult.error,
-    //     details: {
-    //       response: emailResult,
-    //       requestData: {
-    //         to: "test@example.com",
-    //         transactionalId: "welcome-email"
-    //       }
-    //     }
-    //   });
-    // }
   } catch (error) {
     ERROR("UnexpectedError", {
       error,
       details: {
-        phase: "test execution",
-        lastOperation: "subscriber management",
+        phase: "subscription management",
+        lastOperation: "add or pause subscriber",
       },
     });
   }
 }
 
-testBluefox().catch((error: unknown) => {
+async function testTransactionalEmail() {
+  try {
+    // Test sending a transactional email
+    const emailResult = await client.email.sendTransactional({
+      to: EMAIL_ADDRESS,
+      transactionalId: TRANSACTIONAL_ID,
+      data: {
+        name: "Test User",
+        welcomeMessage: "Welcome to our service!",
+      },
+      attachments: [
+        {
+          fileName: "welcome.txt",
+          content: Buffer.from("Welcome to our service!").toString("base64"),
+        },
+      ],
+    });
+
+    if (emailResult.ok) {
+      const email = emailResult.value.data;
+      DEBUG(
+        "EmailSent",
+        {
+          email,
+          status: email.status,
+          deliveredAt: email.deliveredAt
+            ? new Date(email.deliveredAt).toLocaleString()
+            : null,
+        },
+        10
+      );
+    } else {
+      ERROR("SendEmailError", {
+        error: emailResult.error,
+        details: {
+          response: emailResult,
+          requestData: {
+            to: EMAIL_ADDRESS,
+            transactionalId: TRANSACTIONAL_ID,
+          },
+          error: emailResult.error.details,
+        },
+      });
+    }
+  } catch (error) {
+    ERROR("UnexpectedError", {
+      error,
+      details: {
+        phase: "transactional email testing",
+        lastOperation: "send email",
+      },
+    });
+  }
+}
+
+async function runTests() {
+  // await testSubscriptionManagement();
+  await testTransactionalEmail();
+}
+
+runTests().catch((error: unknown) => {
   ERROR("FatalError", {
     error,
     details: {
