@@ -1,7 +1,31 @@
 import { BluefoxClient } from "bluefox-email";
 
+let API_KEY: string;
+
+if (!process.env.BLUEFOX_API_KEY) {
+  throw new Error("ENV BLUEFOX_API_KEY REQUIRED FOR THIS TEST");
+} else {
+  API_KEY = process.env.BLUEFOX_API_KEY;
+}
+
+let SUBSCRIPTION_LIST: string;
+
+if (!process.env.SUBSCRIBER_LIST) {
+  throw new Error("ENV SUBSCRIBER_LIST REQUIRED FOR THIS TEST");
+} else {
+  SUBSCRIPTION_LIST = process.env.SUBSCRIBER_LIST;
+}
+
+let EMAIL_ADDRESS: string;
+
+if (!process.env.EMAIL_ADDRESS) {
+  throw new Error("ENV EMAIL_ADDRESS REQUIRED FOR THIS TEST");
+} else {
+  EMAIL_ADDRESS = process.env.EMAIL_ADDRESS;
+}
+
 const client = new BluefoxClient({
-  apiKey: process.env.BLUEFOX_API_KEY!,
+  apiKey: API_KEY,
   debug: true,
 });
 
@@ -9,9 +33,9 @@ async function testBluefox() {
   try {
     // Test subscriber management
     const addResult = await client.subscriber.add(
-      "test-list-id",
-      "Test User",
-      "test@example.com"
+      SUBSCRIPTION_LIST,
+      "Jamal Lyons",
+      EMAIL_ADDRESS
     );
 
     if (addResult.ok) {
@@ -20,8 +44,8 @@ async function testBluefox() {
 
       // Test pausing the subscriber
       const pauseResult = await client.subscriber.pause(
-        "test-list-id",
-        subscriber.email,
+        SUBSCRIPTION_LIST,
+        EMAIL_ADDRESS,
         new Date(Date.now() + 24 * 60 * 60 * 1000) // Pause for 24 hours
       );
 
@@ -34,37 +58,37 @@ async function testBluefox() {
     }
 
     // Test sending a transactional email
-    const emailResult = await client.email.sendTransactional({
-      to: "test@example.com",
-      transactionalId: "welcome-email",
-      data: {
-        name: "Test User",
-        welcomeMessage: "Welcome to our service!",
-      },
-      attachments: [
-        {
-          fileName: "welcome.txt",
-          content: Buffer.from("Welcome to our service!").toString("base64"),
-        },
-      ],
-    });
+    // const emailResult = await client.email.sendTransactional({
+    //   to: "test@example.com",
+    //   transactionalId: "welcome-email",
+    //   data: {
+    //     name: "Test User",
+    //     welcomeMessage: "Welcome to our service!",
+    //   },
+    //   attachments: [
+    //     {
+    //       fileName: "welcome.txt",
+    //       content: Buffer.from("Welcome to our service!").toString("base64"),
+    //     },
+    //   ],
+    // });
 
-    if (emailResult.ok) {
-      const email = emailResult.value.data;
-      console.log("Successfully sent email:", email);
-      console.log("Email status:", email.status);
-      if (email.deliveredAt) {
-        console.log(
-          "Delivered at:",
-          new Date(email.deliveredAt).toLocaleString()
-        );
-      }
-    } else {
-      console.error("Failed to send email:", emailResult.error.message);
-      if (emailResult.error.details) {
-        console.error("Error details:", emailResult.error.details);
-      }
-    }
+    // if (emailResult.ok) {
+    //   const email = emailResult.value.data;
+    //   console.log("Successfully sent email:", email);
+    //   console.log("Email status:", email.status);
+    //   if (email.deliveredAt) {
+    //     console.log(
+    //       "Delivered at:",
+    //       new Date(email.deliveredAt).toLocaleString()
+    //     );
+    //   }
+    // } else {
+    //   console.error("Failed to send email:", emailResult.error.message);
+    //   if (emailResult.error.details) {
+    //     console.error("Error details:", emailResult.error.details);
+    //   }
+    // }
   } catch (error) {
     console.error("An unexpected error occurred:", error);
     if (error instanceof Error) {
@@ -74,7 +98,6 @@ async function testBluefox() {
   }
 }
 
-// Add proper error handling for the main function
 testBluefox().catch((error: unknown) => {
   console.error("Fatal error in testBluefox:", error);
   process.exit(1);
