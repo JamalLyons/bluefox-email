@@ -9,42 +9,6 @@ import {
   BluefoxClientConfig,
 } from "@bluefox-email/api";
 
-// Response Types
-export interface SubscriberResponse {
-  id: string;
-  email: string;
-  name: string;
-  status: SubscriberStatus;
-  pausedUntil?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface EmailResponse {
-  id: string;
-  to: string;
-  subject: string;
-  status: EmailStatus;
-  sentAt?: string;
-  deliveredAt?: string;
-  openedAt?: string;
-  clickedAt?: string;
-}
-
-// Enums
-export enum SubscriberStatus {
-  Active = "active",
-  Unsubscribed = "unsubscribed",
-  Paused = "paused",
-}
-
-export enum EmailStatus {
-  Queued = "queued",
-  Sent = "sent",
-  Delivered = "delivered",
-  Failed = "failed",
-}
-
 /**
  * A client for the Bluefox.email API.
  *
@@ -94,9 +58,24 @@ export class BluefoxClient extends BluefoxModule {
   }
 }
 
+export interface SubscriberResponse {
+  id: string;
+  email: string;
+  name: string;
+  status: SubscriberStatus;
+  pausedUntil?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export enum SubscriberStatus {
+  Active = "active",
+  Unsubscribed = "unsubscribed",
+  Paused = "paused",
+}
+
 /**
  * Module for managing subscribers.
- * @internal
  */
 class BluefoxSubscriber extends BluefoxModule {
   constructor(context: BluefoxContext) {
@@ -242,9 +221,24 @@ class BluefoxSubscriber extends BluefoxModule {
   }
 }
 
-/**
- * Options for sending a transactional email
- */
+export interface EmailResponse {
+  id: string;
+  to: string;
+  subject: string;
+  status: EmailStatus;
+  sentAt?: string;
+  deliveredAt?: string;
+  openedAt?: string;
+  clickedAt?: string;
+}
+
+export enum EmailStatus {
+  Queued = "queued",
+  Sent = "sent",
+  Delivered = "delivered",
+  Failed = "failed",
+}
+
 export interface SendTransactionalOptions {
   /** Recipient email address */
   to: string;
@@ -261,7 +255,6 @@ export interface SendTransactionalOptions {
 
 /**
  * Module for sending emails.
- * @internal
  */
 class BluefoxEmail extends BluefoxModule {
   constructor(context: BluefoxContext) {
