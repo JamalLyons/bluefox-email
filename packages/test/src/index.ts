@@ -39,14 +39,14 @@ async function testBluefox() {
         subscriptionList: SUBSCRIPTION_LIST,
         emailAddress: EMAIL_ADDRESS,
       },
-      10
+      10,
     );
 
     // Test subscriber management
     const addResult = await client.subscriber.add(
       SUBSCRIPTION_LIST,
       "Jamal Lyons",
-      EMAIL_ADDRESS
+      EMAIL_ADDRESS,
     );
 
     if (addResult.ok) {
@@ -57,7 +57,7 @@ async function testBluefox() {
       const pauseResult = await client.subscriber.pause(
         SUBSCRIPTION_LIST,
         EMAIL_ADDRESS,
-        new Date(Date.now() + 24 * 60 * 60 * 1000) // Pause for 24 hours
+        new Date(Date.now() + 24 * 60 * 60 * 1000), // Pause for 24 hours
       );
 
       if (pauseResult.ok) {

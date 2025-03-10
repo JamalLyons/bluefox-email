@@ -59,7 +59,7 @@ export class BluefoxError extends Error {
 
   static validation(
     message: string,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ): BluefoxError {
     return new BluefoxError({
       code: ErrorCode.VALIDATION_ERROR,
@@ -95,7 +95,7 @@ export interface BluefoxClientConfig {
   requestInterceptor?: (options: RequestOptions) => Promise<RequestOptions>;
   /** Custom response interceptor */
   responseInterceptor?: <T>(
-    response: HttpResponse<T>
+    response: HttpResponse<T>,
   ) => Promise<HttpResponse<T>>;
 }
 
@@ -115,7 +115,7 @@ export class RateLimiter {
     this.limit = parseInt(headers["x-ratelimit-limit"] || String(Infinity), 10);
     this.remaining = parseInt(
       headers["x-ratelimit-remaining"] || String(Infinity),
-      10
+      10,
     );
     this.reset = parseInt(headers["x-ratelimit-reset"] || "0", 10) * 1000;
   }
@@ -217,7 +217,7 @@ export abstract class BluefoxModule {
   }
 
   private async executeRequest<T>(
-    options: RequestOptions
+    options: RequestOptions,
   ): Promise<Result<HttpResponse<T>>> {
     let attempt = 0;
     let lastError: BluefoxError | null = null;
@@ -277,12 +277,12 @@ export abstract class BluefoxModule {
   }
 
   private async performRequest<T>(
-    options: RequestOptions
+    options: RequestOptions,
   ): Promise<HttpResponse<T>> {
     const controller = new AbortController();
     const timeoutId = setTimeout(
       () => controller.abort(),
-      options.timeout || this.requestTimeout
+      options.timeout || this.requestTimeout,
     );
 
     try {
@@ -336,7 +336,7 @@ export abstract class BluefoxModule {
   }
 
   private async createErrorFromResponse(
-    response: Response
+    response: Response,
   ): Promise<BluefoxError> {
     let errorData;
     try {

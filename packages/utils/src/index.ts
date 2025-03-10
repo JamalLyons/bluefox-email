@@ -53,7 +53,7 @@ export function DEBUG(name: string, data: any, maxDepth = 5): void {
       return `Map(${item.size}) {${[...item.entries()]
         .map(
           ([key, value]) =>
-            `${format(key, depth + 1)} => ${format(value, depth + 1)}`
+            `${format(key, depth + 1)} => ${format(value, depth + 1)}`,
         )
         .join(", ")}}`;
     }
@@ -96,12 +96,12 @@ export function DEBUG(name: string, data: any, maxDepth = 5): void {
     data
       .then((resolved) => {
         console.debug(
-          `[${name}] - [Promise Resolved]: ${format(resolved, 0, maxDepth)}`
+          `[${name}] - [Promise Resolved]: ${format(resolved, 0, maxDepth)}`,
         );
       })
       .catch((err) => {
         console.debug(
-          `[${name}] - [Promise Rejected]: ${format(err, 0, maxDepth)}`
+          `[${name}] - [Promise Rejected]: ${format(err, 0, maxDepth)}`,
         );
       });
     return;
@@ -167,7 +167,7 @@ export function ERROR(name: string, error: Error | unknown): void {
       return `Map(${item.size}) {${[...item.entries()]
         .map(
           ([key, value]) =>
-            `${format(key, depth + 1)} => ${format(value, depth + 1)}`
+            `${format(key, depth + 1)} => ${format(value, depth + 1)}`,
         )
         .join(", ")}}`;
     }

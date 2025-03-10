@@ -103,7 +103,7 @@ class BluefoxSubscriber extends BluefoxModule {
   public async add(
     subscriberListId: string,
     name: string,
-    email: string
+    email: string,
   ): Promise<Result<HttpResponse<SubscriberResponse>>> {
     this.logDebug("SubscriberAdd.Input", { subscriberListId, name, email });
     this.validateRequiredFields({ subscriberListId, name, email });
@@ -130,7 +130,7 @@ class BluefoxSubscriber extends BluefoxModule {
    */
   public async remove(
     subscriberListId: string,
-    email: string
+    email: string,
   ): Promise<Result<HttpResponse<SubscriberResponse>>> {
     this.logDebug("SubscriberRemove.Input", { subscriberListId, email });
     this.validateRequiredFields({ subscriberListId, email });
@@ -159,7 +159,7 @@ class BluefoxSubscriber extends BluefoxModule {
   public async pause(
     subscriberListId: string,
     email: string,
-    date: Date
+    date: Date,
   ): Promise<Result<HttpResponse<SubscriberResponse>>> {
     this.logDebug("SubscriberPause.Input", { subscriberListId, email, date });
     this.validateRequiredFields({ subscriberListId, email });
@@ -190,7 +190,7 @@ class BluefoxSubscriber extends BluefoxModule {
    */
   public async activate(
     subscriberListId: string,
-    email: string
+    email: string,
   ): Promise<Result<HttpResponse<SubscriberResponse>>> {
     this.logDebug("SubscriberActivate.Input", { subscriberListId, email });
     this.validateRequiredFields({ subscriberListId, email });
@@ -214,7 +214,7 @@ class BluefoxSubscriber extends BluefoxModule {
 
     if (missingFields.length > 0) {
       const error = BluefoxError.validation(
-        `Missing required fields: ${missingFields.join(", ")}`
+        `Missing required fields: ${missingFields.join(", ")}`,
       );
       this.logError("SubscriberValidation.RequiredFields", error);
       throw error;
@@ -308,7 +308,7 @@ class BluefoxEmail extends BluefoxModule {
    * ```
    */
   public async sendTransactional(
-    options: SendTransactionalOptions
+    options: SendTransactionalOptions,
   ): Promise<Result<HttpResponse<EmailResponse>>> {
     this.logDebug("SendTransactional.Input", options);
     this.validateTransactionalOptions(options);
@@ -324,7 +324,7 @@ class BluefoxEmail extends BluefoxModule {
   }
 
   private validateTransactionalOptions(
-    options: SendTransactionalOptions
+    options: SendTransactionalOptions,
   ): void {
     this.logDebug("EmailValidation.TransactionalOptions", options);
 
@@ -351,7 +351,7 @@ class BluefoxEmail extends BluefoxModule {
 
     if (missingFields.length > 0) {
       const error = BluefoxError.validation(
-        `Missing required fields: ${missingFields.join(", ")}`
+        `Missing required fields: ${missingFields.join(", ")}`,
       );
       this.logError("EmailValidation.RequiredFields", error);
       throw error;
@@ -369,7 +369,7 @@ class BluefoxEmail extends BluefoxModule {
   }
 
   private validateAttachments(
-    attachments: Array<{ fileName: string; content: string }>
+    attachments: Array<{ fileName: string; content: string }>,
   ): void {
     this.logDebug("EmailValidation.Attachments", {
       count: attachments.length,
@@ -385,14 +385,14 @@ class BluefoxEmail extends BluefoxModule {
     attachments.forEach((attachment, index) => {
       if (!attachment.fileName) {
         const error = BluefoxError.validation(
-          `Missing fileName for attachment at index ${index}`
+          `Missing fileName for attachment at index ${index}`,
         );
         this.logError("EmailValidation.Attachments", error);
         throw error;
       }
       if (!attachment.content) {
         const error = BluefoxError.validation(
-          `Missing content for attachment at index ${index}`
+          `Missing content for attachment at index ${index}`,
         );
         this.logError("EmailValidation.Attachments", error);
         throw error;
@@ -401,7 +401,7 @@ class BluefoxEmail extends BluefoxModule {
         atob(attachment.content);
       } catch {
         const error = BluefoxError.validation(
-          `Invalid base64 content for attachment ${attachment.fileName}`
+          `Invalid base64 content for attachment ${attachment.fileName}`,
         );
         this.logError("EmailValidation.Attachments", error);
         throw error;
