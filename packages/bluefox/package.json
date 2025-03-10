@@ -11,17 +11,18 @@
     "access": "public"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    ".": "./src/lib.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit"
   },
+  "dependencies": {
+    "@bluefox-email/api": "workspace:*",
+    "@bluefox-email/utils": "workspace:*"
+  },
   "devDependencies": {
     "@bluefox-email/typescript-config": "workspace:*",
-    "@bluefox-email/api": "workspace:*",
-    "@bluefox-email/utils": "workspace:*",
     "@types/node": "^22.13.9",
     "typescript": "5.8.2"
-  },
-  "dependencies": {}
+  }
 }

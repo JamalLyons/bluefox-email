@@ -7,7 +7,7 @@ import {
   BluefoxError,
   BluefoxEndpoints,
   BluefoxClientConfig,
-} from "@bluefox-email/api/v1";
+} from "@bluefox-email/api";
 
 // Response Types
 export interface SubscriberResponse {
