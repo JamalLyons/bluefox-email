@@ -16,7 +16,7 @@ Welcome to the Bluefox Email Monorepo! This repository contains a collection of 
 
 This monorepo is organized into several packages, each serving a specific purpose:
 
-- **`@bluefox`**: A high-level client for the Bluefox.email service.
+- **`bluefox-email`**: A high-level client for the Bluefox.email service.
 - **`@bluefox/api`**: Low-level bindings for the Bluefox.email service.
 - **`@bluefox/convex`**: Integration for Convex with Bluefox.email.
 - **`@bluefox/utils`**: Utility functions for working with Bluefox.email.
