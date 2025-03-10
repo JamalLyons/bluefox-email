@@ -1,17 +1,17 @@
 {
   "name": "bluefox-email",
-  "description": "A library for sending emails from Bluefox email",
-  "version": "0.0.0",
-  "private": false,
+  "description": "Send beautiful emails using Bluefox.email",
+  "version": "1.0.0",
+  "private": true,
   "keywords": [
-    "bluefox",
-    "email"
+    "email",
+    "bluefox"
   ],
   "publishConfig": {
     "access": "public"
   },
   "exports": {
-    ".": "./src/lib.ts"
+    "./*": "./src/*.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit"

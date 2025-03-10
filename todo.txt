@@ -2,6 +2,7 @@
 so i can type that. I might have to do this manually but I want to ask the 
 bluefox team first before that...
 
+- allow the request re-try logic to be disabled by the user. They can pass 0 and a fetch will be made only once always.
 - Add a console/file based logger for debugging in the utils package
 - test the library using real emails.
 - add some kind of license to the package (need to ask bluefox team first maybe?)

@@ -12,7 +12,7 @@
     "access": "public"
   },
   "exports": {
-    ".": "./src/lib.ts"
+    "./*": "./src/*.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit"
