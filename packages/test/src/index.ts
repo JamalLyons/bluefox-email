@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { BluefoxClient } from "bluefox-email";
 
 let API_KEY: string;
@@ -53,7 +54,7 @@ async function testBluefox() {
         console.log("Successfully paused subscriber:", pauseResult.value.data);
       }
     } else {
-      console.error("Failed to add subscriber:", addResult.error.message);
+      console.error("Failed to add subscriber:", addResult.error);
       return;
     }
 

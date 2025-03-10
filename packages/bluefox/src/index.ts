@@ -105,7 +105,6 @@ class BluefoxSubscriber extends BluefoxModule {
     name: string,
     email: string
   ): Promise<Result<HttpResponse<SubscriberResponse>>> {
-    // Validate inputs
     this.validateRequiredFields({ subscriberListId, name, email });
     this.validateEmail(email);
 
