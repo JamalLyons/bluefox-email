@@ -22,6 +22,10 @@ importers:
         version: 2.4.4
 
   packages/api:
+    dependencies:
+      '@bluefox-email/utils':
+        specifier: workspace:*
+        version: link:../utils
     devDependencies:
       '@bluefox-email/typescript-config':
         specifier: workspace:*

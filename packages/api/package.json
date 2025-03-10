@@ -47,7 +47,9 @@
     "lint": "eslint src/",
     "prepublishOnly": "npm run build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@bluefox-email/utils": "workspace:*"
+  },
   "devDependencies": {
     "@bluefox-email/typescript-config": "workspace:*",
     "@types/node": "^22.13.9",
