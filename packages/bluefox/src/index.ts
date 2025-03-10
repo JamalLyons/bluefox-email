@@ -216,7 +216,7 @@ class BluefoxSubscriber extends BluefoxModule {
       const error = BluefoxError.validation(
         `Missing required fields: ${missingFields.join(", ")}`
       );
-      this.logDebug("SubscriberValidation.Error", error);
+      this.logError("SubscriberValidation.RequiredFields", error);
       throw error;
     }
   }
@@ -226,7 +226,7 @@ class BluefoxSubscriber extends BluefoxModule {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       const error = BluefoxError.validation("Invalid email address format");
-      this.logDebug("SubscriberValidation.Error", error);
+      this.logError("SubscriberValidation.Email", error);
       throw error;
     }
   }
@@ -235,13 +235,13 @@ class BluefoxSubscriber extends BluefoxModule {
     this.logDebug("SubscriberValidation.Date", { date });
     if (!(date instanceof Date) || isNaN(date.getTime())) {
       const error = BluefoxError.validation("Invalid date format");
-      this.logDebug("SubscriberValidation.Error", error);
+      this.logError("SubscriberValidation.Date", error);
       throw error;
     }
 
     if (date < new Date()) {
       const error = BluefoxError.validation("Pause date must be in the future");
-      this.logDebug("SubscriberValidation.Error", error);
+      this.logError("SubscriberValidation.Date", error);
       throw error;
     }
   }
@@ -353,7 +353,7 @@ class BluefoxEmail extends BluefoxModule {
       const error = BluefoxError.validation(
         `Missing required fields: ${missingFields.join(", ")}`
       );
-      this.logDebug("EmailValidation.Error", error);
+      this.logError("EmailValidation.RequiredFields", error);
       throw error;
     }
   }
@@ -363,7 +363,7 @@ class BluefoxEmail extends BluefoxModule {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       const error = BluefoxError.validation("Invalid email address format");
-      this.logDebug("EmailValidation.Error", error);
+      this.logError("EmailValidation.Email", error);
       throw error;
     }
   }
@@ -378,7 +378,7 @@ class BluefoxEmail extends BluefoxModule {
 
     if (!Array.isArray(attachments)) {
       const error = BluefoxError.validation("Attachments must be an array");
-      this.logDebug("EmailValidation.Error", error);
+      this.logError("EmailValidation.Attachments", error);
       throw error;
     }
 
@@ -387,14 +387,14 @@ class BluefoxEmail extends BluefoxModule {
         const error = BluefoxError.validation(
           `Missing fileName for attachment at index ${index}`
         );
-        this.logDebug("EmailValidation.Error", error);
+        this.logError("EmailValidation.Attachments", error);
         throw error;
       }
       if (!attachment.content) {
         const error = BluefoxError.validation(
           `Missing content for attachment at index ${index}`
         );
-        this.logDebug("EmailValidation.Error", error);
+        this.logError("EmailValidation.Attachments", error);
         throw error;
       }
       try {
@@ -403,7 +403,7 @@ class BluefoxEmail extends BluefoxModule {
         const error = BluefoxError.validation(
           `Invalid base64 content for attachment ${attachment.fileName}`
         );
-        this.logDebug("EmailValidation.Error", error);
+        this.logError("EmailValidation.Attachments", error);
         throw error;
       }
     });

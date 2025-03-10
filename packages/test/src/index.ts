@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { BluefoxClient } from "bluefox-email";
-import { DEBUG } from "@bluefox-email/utils";
+import { DEBUG, ERROR } from "@bluefox-email/utils";
 
 let API_KEY: string;
 
@@ -33,6 +33,15 @@ const client = new BluefoxClient({
 
 async function testBluefox() {
   try {
+    DEBUG(
+      "TestConfig",
+      {
+        subscriptionList: SUBSCRIPTION_LIST,
+        emailAddress: EMAIL_ADDRESS,
+      },
+      10
+    );
+
     // Test subscriber management
     const addResult = await client.subscriber.add(
       SUBSCRIPTION_LIST,
@@ -42,7 +51,7 @@ async function testBluefox() {
 
     if (addResult.ok) {
       const subscriber = addResult.value.data;
-      console.log("Successfully added subscriber:", subscriber);
+      DEBUG("SubscriberAdded", subscriber, 10);
 
       // Test pausing the subscriber
       const pauseResult = await client.subscriber.pause(
@@ -52,10 +61,27 @@ async function testBluefox() {
       );
 
       if (pauseResult.ok) {
-        DEBUG("Successfully paused subscriber:", pauseResult.value.data);
+        DEBUG("SubscriberPaused", pauseResult.value.data, 10);
+      } else {
+        ERROR("PauseSubscriberError", {
+          error: pauseResult.error,
+          details: {
+            list: SUBSCRIPTION_LIST,
+            email: EMAIL_ADDRESS,
+            response: pauseResult.error.details,
+          },
+        });
       }
     } else {
-      console.error("Failed to add subscriber:", addResult.error);
+      ERROR("AddSubscriberError", {
+        error: addResult.error,
+        details: {
+          list: SUBSCRIPTION_LIST,
+          email: EMAIL_ADDRESS,
+          name: "Jamal Lyons",
+          response: addResult.error.details,
+        },
+      });
       return;
     }
 
@@ -77,30 +103,45 @@ async function testBluefox() {
 
     // if (emailResult.ok) {
     //   const email = emailResult.value.data;
-    //   console.log("Successfully sent email:", email);
-    //   console.log("Email status:", email.status);
-    //   if (email.deliveredAt) {
-    //     console.log(
-    //       "Delivered at:",
-    //       new Date(email.deliveredAt).toLocaleString()
-    //     );
-    //   }
+    //   DEBUG("EmailSent", {
+    //     email,
+    //     status: email.status,
+    //     deliveredAt: email.deliveredAt ? new Date(email.deliveredAt).toLocaleString() : null
+    //   }, 10);
     // } else {
-    //   console.error("Failed to send email:", emailResult.error.message);
-    //   if (emailResult.error.details) {
-    //     console.error("Error details:", emailResult.error.details);
-    //   }
+    //   ERROR("SendEmailError", {
+    //     error: emailResult.error,
+    //     details: {
+    //       response: emailResult,
+    //       requestData: {
+    //         to: "test@example.com",
+    //         transactionalId: "welcome-email"
+    //       }
+    //     }
+    //   });
     // }
   } catch (error) {
-    console.error("An unexpected error occurred:", error);
-    if (error instanceof Error) {
-      console.error("Error message:", error.message);
-      console.error("Stack trace:", error.stack);
-    }
+    ERROR("UnexpectedError", {
+      error,
+      details: {
+        phase: "test execution",
+        lastOperation: "subscriber management",
+      },
+    });
   }
 }
 
 testBluefox().catch((error: unknown) => {
-  console.error("Fatal error in testBluefox:", error);
+  ERROR("FatalError", {
+    error,
+    details: {
+      phase: "test initialization",
+      environmentVars: {
+        hasApiKey: !!process.env.BLUEFOX_API_KEY,
+        hasSubscriberList: !!process.env.SUBSCRIBER_LIST,
+        hasEmailAddress: !!process.env.EMAIL_ADDRESS,
+      },
+    },
+  });
   process.exit(1);
 });

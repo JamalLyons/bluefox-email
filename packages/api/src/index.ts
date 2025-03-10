@@ -1,4 +1,4 @@
-import { DEBUG } from "@bluefox-email/utils";
+import { DEBUG, ERROR } from "@bluefox-email/utils";
 
 // HTTP Methods and Response Types
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -155,9 +155,16 @@ export abstract class BluefoxModule {
     }
   }
 
+  protected logError(name: string, error: Error | unknown): void {
+    ERROR(name, error);
+    if (this.debug) {
+      this.logDebug(`${name}.Details`, error);
+    }
+  }
+
   private handleError(error: unknown): Result<never> {
     const normalizedError = this.normalizeError(error);
-    this.logDebug("BluefoxError", normalizedError);
+    this.logError("BluefoxError", normalizedError);
     return { ok: false, error: normalizedError };
   }
 
@@ -193,6 +200,7 @@ export abstract class BluefoxModule {
           },
         });
       } catch (error) {
+        this.logError("RequestInterceptorError", error);
         return this.handleError(error);
       }
     }
@@ -201,6 +209,7 @@ export abstract class BluefoxModule {
     try {
       await this.context.rateLimiter.checkRateLimit();
     } catch (error) {
+      this.logError("RateLimitError", error);
       return this.handleError(error);
     }
 
@@ -240,6 +249,7 @@ export abstract class BluefoxModule {
             });
             return { ok: true, value: interceptedResponse };
           } catch (error) {
+            this.logError("ResponseInterceptorError", error);
             return this.handleError(error);
           }
         }
@@ -248,7 +258,7 @@ export abstract class BluefoxModule {
       } catch (error) {
         lastError = this.normalizeError(error);
 
-        this.logDebug("RequestError", {
+        this.logError("RequestError", {
           attempt,
           error: lastError,
           willRetry: this.shouldRetry(lastError, attempt),
