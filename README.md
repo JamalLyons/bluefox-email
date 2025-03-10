@@ -1,6 +1,6 @@
 # Bluefox Email Monorepo
 
-Welcome to the Bluefox Email Monorepo! This repository contains a collection of libraries designed for sending emails using the [Bluefox.email](https://bluefox.email) API in TypeScript. The monorepo structure allows for easy management and development of multiple packages that serve different purposes.
+Welcome to the Bluefox Email Monorepo! This repository contains a collection of libraries designed for sending emails using the [Bluefox.email](https://bluefox.email) API in TypeScript.
 
 ## Table of Contents
 
