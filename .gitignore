@@ -27,7 +27,7 @@ out/
 build
 /packages/*/dist/index.cjs
 /packages/*/dist/index.js
-/packages/*/dist/index.cts
+/packages/*/dist/index.d.cts
 
 # Misc
 .DS_Store
