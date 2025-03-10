@@ -5,6 +5,16 @@
   "private": false,
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JamalLyons/bluefox-email.git",
+    "directory": "packages/api"
+  },
+  "homepage": "https://github.com/JamalLyons/bluefox-email/tree/main/packages/api#readme",
+  "bugs": {
+    "url": "https://github.com/JamalLyons/bluefox-email/issues"
+  },
+  "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,7 +30,8 @@
     "README.md"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "keywords": [
     "bluefox",
