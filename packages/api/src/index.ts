@@ -149,11 +149,15 @@ export abstract class BluefoxModule {
     this.debug = context.config.debug || false;
   }
 
+  protected logDebug(name: string, data: unknown): void {
+    if (this.debug) {
+      DEBUG(name, data);
+    }
+  }
+
   private handleError(error: unknown): Result<never> {
     const normalizedError = this.normalizeError(error);
-    if (this.debug) {
-      DEBUG("BluefoxError", normalizedError);
-    }
+    this.logDebug("BluefoxError", normalizedError);
     return { ok: false, error: normalizedError };
   }
 
@@ -165,33 +169,29 @@ export abstract class BluefoxModule {
   }: RequestOptions): Promise<Result<HttpResponse<T>>> {
     let options: RequestOptions = { path, method, headers, body };
 
-    if (this.debug) {
-      DEBUG("Request", {
-        url: `${this.context.baseUrl}/${path}`,
-        method,
-        headers: {
-          ...headers,
-          Authorization: "Bearer [REDACTED]",
-        },
-        body,
-      });
-    }
+    this.logDebug("Request", {
+      url: `${this.context.baseUrl}/${path}`,
+      method,
+      headers: {
+        ...headers,
+        Authorization: "Bearer [REDACTED]",
+      },
+      body,
+    });
 
     // Apply request interceptor if configured
     if (this.context.config.requestInterceptor) {
       try {
         options = await this.context.config.requestInterceptor(options);
-        if (this.debug) {
-          DEBUG("RequestInterceptor", {
-            modifiedOptions: {
-              ...options,
-              headers: {
-                ...options.headers,
-                Authorization: "Bearer [REDACTED]",
-              },
+        this.logDebug("RequestInterceptor", {
+          modifiedOptions: {
+            ...options,
+            headers: {
+              ...options.headers,
+              Authorization: "Bearer [REDACTED]",
             },
-          });
-        }
+          },
+        });
       } catch (error) {
         return this.handleError(error);
       }
@@ -214,8 +214,8 @@ export abstract class BluefoxModule {
     let lastError: BluefoxError | null = null;
 
     while (attempt < this.maxRetries) {
-      if (this.debug && attempt > 0) {
-        DEBUG("RetryAttempt", { attempt, maxRetries: this.maxRetries });
+      if (attempt > 0) {
+        this.logDebug("RetryAttempt", { attempt, maxRetries: this.maxRetries });
       }
 
       try {
@@ -224,24 +224,20 @@ export abstract class BluefoxModule {
         // Update rate limit info
         this.context.rateLimiter.updateFromHeaders(response.headers);
 
-        if (this.debug) {
-          DEBUG("Response", {
-            status: response.status,
-            headers: response.headers,
-            data: response.data,
-          });
-        }
+        this.logDebug("Response", {
+          status: response.status,
+          headers: response.headers,
+          data: response.data,
+        });
 
         // Apply response interceptor if configured
         if (this.context.config.responseInterceptor) {
           try {
             const interceptedResponse =
               await this.context.config.responseInterceptor(response);
-            if (this.debug) {
-              DEBUG("ResponseInterceptor", {
-                modifiedResponse: interceptedResponse,
-              });
-            }
+            this.logDebug("ResponseInterceptor", {
+              modifiedResponse: interceptedResponse,
+            });
             return { ok: true, value: interceptedResponse };
           } catch (error) {
             return this.handleError(error);
@@ -252,13 +248,11 @@ export abstract class BluefoxModule {
       } catch (error) {
         lastError = this.normalizeError(error);
 
-        if (this.debug) {
-          DEBUG("RequestError", {
-            attempt,
-            error: lastError,
-            willRetry: this.shouldRetry(lastError, attempt),
-          });
-        }
+        this.logDebug("RequestError", {
+          attempt,
+          error: lastError,
+          willRetry: this.shouldRetry(lastError, attempt),
+        });
 
         if (!this.shouldRetry(lastError, attempt)) {
           return { ok: false, error: lastError };
@@ -283,17 +277,15 @@ export abstract class BluefoxModule {
 
     try {
       const url = `${this.context.baseUrl}/${options.path}`;
-      if (this.debug) {
-        DEBUG("FetchRequest", {
-          url,
-          method: options.method,
-          headers: {
-            ...options.headers,
-            Authorization: "Bearer [REDACTED]",
-          },
-          bodySize: options.body ? JSON.stringify(options.body).length : 0,
-        });
-      }
+      this.logDebug("FetchRequest", {
+        url,
+        method: options.method,
+        headers: {
+          ...options.headers,
+          Authorization: "Bearer [REDACTED]",
+        },
+        bodySize: options.body ? JSON.stringify(options.body).length : 0,
+      });
 
       const response = await fetch(url, {
         method: options.method,
@@ -320,13 +312,11 @@ export abstract class BluefoxModule {
         timestamp: Date.now(),
       };
 
-      if (this.debug) {
-        DEBUG("FetchResponse", {
-          status: result.status,
-          headers: result.headers,
-          dataSize: JSON.stringify(result.data).length,
-        });
-      }
+      this.logDebug("FetchResponse", {
+        status: result.status,
+        headers: result.headers,
+        dataSize: JSON.stringify(result.data).length,
+      });
 
       return result;
     } catch (error) {

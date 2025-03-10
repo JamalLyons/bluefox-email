@@ -104,6 +104,9 @@ importers:
 
   packages/test:
     dependencies:
+      '@bluefox-email/utils':
+        specifier: workspace:*
+        version: link:../utils
       bluefox-email:
         specifier: workspace:*
         version: link:../bluefox

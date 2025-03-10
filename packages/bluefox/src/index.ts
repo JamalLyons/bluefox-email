@@ -105,14 +105,18 @@ class BluefoxSubscriber extends BluefoxModule {
     name: string,
     email: string
   ): Promise<Result<HttpResponse<SubscriberResponse>>> {
+    this.logDebug("SubscriberAdd.Input", { subscriberListId, name, email });
     this.validateRequiredFields({ subscriberListId, name, email });
     this.validateEmail(email);
 
-    return await this.request({
+    const result = await this.request<SubscriberResponse>({
       path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}`,
       method: "POST",
       body: { name, email },
     });
+
+    this.logDebug("SubscriberAdd.Result", result);
+    return result;
   }
 
   /**
@@ -128,14 +132,18 @@ class BluefoxSubscriber extends BluefoxModule {
     subscriberListId: string,
     email: string
   ): Promise<Result<HttpResponse<SubscriberResponse>>> {
+    this.logDebug("SubscriberRemove.Input", { subscriberListId, email });
     this.validateRequiredFields({ subscriberListId, email });
     this.validateEmail(email);
 
-    return await this.request({
+    const result = await this.request<SubscriberResponse>({
       path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}/${email}`,
       method: "PATCH",
       body: { status: SubscriberStatus.Unsubscribed },
     });
+
+    this.logDebug("SubscriberRemove.Result", result);
+    return result;
   }
 
   /**
@@ -153,11 +161,12 @@ class BluefoxSubscriber extends BluefoxModule {
     email: string,
     date: Date
   ): Promise<Result<HttpResponse<SubscriberResponse>>> {
+    this.logDebug("SubscriberPause.Input", { subscriberListId, email, date });
     this.validateRequiredFields({ subscriberListId, email });
     this.validateEmail(email);
     this.validateDate(date);
 
-    return await this.request({
+    const result = await this.request<SubscriberResponse>({
       path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}/${email}`,
       method: "PATCH",
       body: {
@@ -165,6 +174,9 @@ class BluefoxSubscriber extends BluefoxModule {
         pausedUntil: date.toISOString(),
       },
     });
+
+    this.logDebug("SubscriberPause.Result", result);
+    return result;
   }
 
   /**
@@ -180,42 +192,57 @@ class BluefoxSubscriber extends BluefoxModule {
     subscriberListId: string,
     email: string
   ): Promise<Result<HttpResponse<SubscriberResponse>>> {
+    this.logDebug("SubscriberActivate.Input", { subscriberListId, email });
     this.validateRequiredFields({ subscriberListId, email });
     this.validateEmail(email);
 
-    return await this.request({
+    const result = await this.request<SubscriberResponse>({
       path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}/${email}`,
       method: "PATCH",
       body: { status: SubscriberStatus.Active },
     });
+
+    this.logDebug("SubscriberActivate.Result", result);
+    return result;
   }
 
   private validateRequiredFields(fields: Record<string, unknown>): void {
+    this.logDebug("SubscriberValidation.RequiredFields", fields);
     const missingFields = Object.entries(fields)
       .filter(([_, value]) => !value)
       .map(([key]) => key);
 
     if (missingFields.length > 0) {
-      throw BluefoxError.validation(
+      const error = BluefoxError.validation(
         `Missing required fields: ${missingFields.join(", ")}`
       );
+      this.logDebug("SubscriberValidation.Error", error);
+      throw error;
     }
   }
 
   private validateEmail(email: string): void {
+    this.logDebug("SubscriberValidation.Email", { email });
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      throw BluefoxError.validation("Invalid email address format");
+      const error = BluefoxError.validation("Invalid email address format");
+      this.logDebug("SubscriberValidation.Error", error);
+      throw error;
     }
   }
 
   private validateDate(date: Date): void {
+    this.logDebug("SubscriberValidation.Date", { date });
     if (!(date instanceof Date) || isNaN(date.getTime())) {
-      throw BluefoxError.validation("Invalid date format");
+      const error = BluefoxError.validation("Invalid date format");
+      this.logDebug("SubscriberValidation.Error", error);
+      throw error;
     }
 
     if (date < new Date()) {
-      throw BluefoxError.validation("Pause date must be in the future");
+      const error = BluefoxError.validation("Pause date must be in the future");
+      this.logDebug("SubscriberValidation.Error", error);
+      throw error;
     }
   }
 }
@@ -283,18 +310,24 @@ class BluefoxEmail extends BluefoxModule {
   public async sendTransactional(
     options: SendTransactionalOptions
   ): Promise<Result<HttpResponse<EmailResponse>>> {
+    this.logDebug("SendTransactional.Input", options);
     this.validateTransactionalOptions(options);
 
-    return await this.request({
+    const result = await this.request<EmailResponse>({
       path: "send-transactional",
       method: "POST",
       body: options,
     });
+
+    this.logDebug("SendTransactional.Result", result);
+    return result;
   }
 
   private validateTransactionalOptions(
     options: SendTransactionalOptions
   ): void {
+    this.logDebug("EmailValidation.TransactionalOptions", options);
+
     // Validate required fields
     this.validateRequiredFields({
       to: options.to,
@@ -311,48 +344,67 @@ class BluefoxEmail extends BluefoxModule {
   }
 
   private validateRequiredFields(fields: Record<string, unknown>): void {
+    this.logDebug("EmailValidation.RequiredFields", fields);
     const missingFields = Object.entries(fields)
       .filter(([_, value]) => !value)
       .map(([key]) => key);
 
     if (missingFields.length > 0) {
-      throw BluefoxError.validation(
+      const error = BluefoxError.validation(
         `Missing required fields: ${missingFields.join(", ")}`
       );
+      this.logDebug("EmailValidation.Error", error);
+      throw error;
     }
   }
 
   private validateEmail(email: string): void {
+    this.logDebug("EmailValidation.Email", { email });
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      throw BluefoxError.validation("Invalid email address format");
+      const error = BluefoxError.validation("Invalid email address format");
+      this.logDebug("EmailValidation.Error", error);
+      throw error;
     }
   }
 
   private validateAttachments(
     attachments: Array<{ fileName: string; content: string }>
   ): void {
+    this.logDebug("EmailValidation.Attachments", {
+      count: attachments.length,
+      fileNames: attachments.map((a) => a.fileName),
+    });
+
     if (!Array.isArray(attachments)) {
-      throw BluefoxError.validation("Attachments must be an array");
+      const error = BluefoxError.validation("Attachments must be an array");
+      this.logDebug("EmailValidation.Error", error);
+      throw error;
     }
 
     attachments.forEach((attachment, index) => {
       if (!attachment.fileName) {
-        throw BluefoxError.validation(
+        const error = BluefoxError.validation(
           `Missing fileName for attachment at index ${index}`
         );
+        this.logDebug("EmailValidation.Error", error);
+        throw error;
       }
       if (!attachment.content) {
-        throw BluefoxError.validation(
+        const error = BluefoxError.validation(
           `Missing content for attachment at index ${index}`
         );
+        this.logDebug("EmailValidation.Error", error);
+        throw error;
       }
       try {
         atob(attachment.content);
       } catch {
-        throw BluefoxError.validation(
+        const error = BluefoxError.validation(
           `Invalid base64 content for attachment ${attachment.fileName}`
         );
+        this.logDebug("EmailValidation.Error", error);
+        throw error;
       }
     });
   }
