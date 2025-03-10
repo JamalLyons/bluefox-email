@@ -1,15 +1,11 @@
-import {
-  BluefoxClient,
-  SubscriberResponse,
-  EmailResponse,
-} from "bluefox-email";
+import { BluefoxClient } from "bluefox-email";
 
 const client = new BluefoxClient({
   apiKey: process.env.BLUEFOX_API_KEY!,
   debug: true,
 });
 
-async function testBluefox(): Promise<void> {
+async function testBluefox() {
   try {
     // Test subscriber management
     const addResult = await client.subscriber.add(
@@ -19,7 +15,7 @@ async function testBluefox(): Promise<void> {
     );
 
     if (addResult.ok) {
-      const subscriber: SubscriberResponse = addResult.value.data;
+      const subscriber = addResult.value.data;
       console.log("Successfully added subscriber:", subscriber);
 
       // Test pausing the subscriber
@@ -54,7 +50,7 @@ async function testBluefox(): Promise<void> {
     });
 
     if (emailResult.ok) {
-      const email: EmailResponse = emailResult.value.data;
+      const email = emailResult.value.data;
       console.log("Successfully sent email:", email);
       console.log("Email status:", email.status);
       if (email.deliveredAt) {

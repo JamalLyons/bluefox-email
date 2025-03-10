@@ -1,6 +1,23 @@
 {
   "name": "@bluefox-email/typescript-config",
   "version": "1.0.0",
-  "private": true,
-  "license": "MIT"
+  "private": false,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "base.json"
+  ],
+  "main": "./base.json",
+  "types": "./base.json",
+  "keywords": [
+    "bluefox",
+    "typescript",
+    "config"
+  ],
+  "dependencies": {
+    "@types/node": "^22.13.9",
+    "typescript": "5.8.2"
+  }
 }

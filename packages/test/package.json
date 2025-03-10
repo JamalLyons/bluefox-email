@@ -9,7 +9,7 @@
     "build": "tsc",
     "start": "npm run build && node dist/index.js",
     "dev": "tsx src/index.ts",
-    "type-check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",

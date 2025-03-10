@@ -2,17 +2,47 @@
   "name": "@bluefox-email/api",
   "description": "API for the bluefox email library",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/lib.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "bluefox",
+    "email",
+    "api",
+    "typescript"
+  ],
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {},
   "devDependencies": {
     "@bluefox-email/typescript-config": "workspace:*",
     "@types/node": "^22.13.9",
-    "typescript": "5.8.2"
+    "typescript": "5.8.2",
+    "tsup": "^8.0.2",
+    "rimraf": "^6.0.1",
+    "eslint": "^9.22.0"
   }
 }
