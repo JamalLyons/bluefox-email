@@ -149,7 +149,7 @@ async function testTransactionalEmail() {
 }
 
 async function runTests() {
-  // await testSubscriptionManagement();
+  await testSubscriptionManagement();
   await testTransactionalEmail();
 }
 
