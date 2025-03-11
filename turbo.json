@@ -23,6 +23,7 @@
     "typecheck": {
       "dependsOn": ["^build"],
       "cache": false
-    }
+    },
+    "run-test": {}
   }
 }

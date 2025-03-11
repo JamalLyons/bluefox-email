@@ -53,7 +53,7 @@ export function DEBUG(name: string, data: any, maxDepth = 5): void {
       return `Map(${item.size}) {${[...item.entries()]
         .map(
           ([key, value]) =>
-            `${format(key, depth + 1)} => ${format(value, depth + 1)}`,
+            `${format(key, depth + 1)} => ${format(value, depth + 1)}`
         )
         .join(", ")}}`;
     }
@@ -96,12 +96,12 @@ export function DEBUG(name: string, data: any, maxDepth = 5): void {
     data
       .then((resolved) => {
         console.debug(
-          `[${name}] - [Promise Resolved]: ${format(resolved, 0, maxDepth)}`,
+          `[${name}] - [Promise Resolved]: ${format(resolved, 0, maxDepth)}`
         );
       })
       .catch((err) => {
         console.debug(
-          `[${name}] - [Promise Rejected]: ${format(err, 0, maxDepth)}`,
+          `[${name}] - [Promise Rejected]: ${format(err, 0, maxDepth)}`
         );
       });
     return;
@@ -134,8 +134,13 @@ export function DEBUG(name: string, data: any, maxDepth = 5): void {
  *
  * @param name - A string label for the error log.
  * @param error - The error to log. Can be an Error instance or any other type.
+ * @param maxDepth - Maximum recursion depth for nested objects (default: 5).
  */
-export function ERROR(name: string, error: Error | unknown): void {
+export function ERROR(
+  name: string,
+  error: Error | unknown,
+  maxDepth = 5
+): void {
   const format = (item: any, depth: number, maxDepth = 5): string => {
     const seen = new WeakSet();
 
@@ -167,7 +172,7 @@ export function ERROR(name: string, error: Error | unknown): void {
       return `Map(${item.size}) {${[...item.entries()]
         .map(
           ([key, value]) =>
-            `${format(key, depth + 1)} => ${format(value, depth + 1)}`,
+            `${format(key, depth + 1)} => ${format(value, depth + 1)}`
         )
         .join(", ")}}`;
     }
@@ -212,6 +217,6 @@ export function ERROR(name: string, error: Error | unknown): void {
       console.error(`[${name}] - Stack: ${error.stack}`);
     }
   } else {
-    console.error(`[${name}] - ${format(error, 0)}`);
+    console.error(`[${name}] - ${format(error, 0, maxDepth)}`);
   }
 }

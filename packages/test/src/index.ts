@@ -164,16 +164,20 @@ async function runTests() {
 }
 
 runTests().catch((error: unknown) => {
-  ERROR("FatalError", {
-    error,
-    details: {
-      phase: "test initialization",
-      environmentVars: {
-        hasApiKey: !!process.env.BLUEFOX_API_KEY,
-        hasSubscriberList: !!process.env.SUBSCRIBER_LIST,
-        hasEmailAddress: !!process.env.EMAIL_ADDRESS,
+  ERROR(
+    "FatalError",
+    {
+      error,
+      details: {
+        phase: "test initialization",
+        environmentVars: {
+          hasApiKey: !!process.env.BLUEFOX_API_KEY,
+          hasSubscriberList: !!process.env.SUBSCRIBER_LIST,
+          hasEmailAddress: !!process.env.EMAIL_ADDRESS,
+        },
       },
     },
-  });
+    10
+  );
   process.exit(1);
 });

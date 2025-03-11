@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsx src/index.ts",
+    "run-test": "tsx src/index.ts",
     "start": "npm run build && node dist/index.js",
     "typecheck": "tsc --noEmit"
   },

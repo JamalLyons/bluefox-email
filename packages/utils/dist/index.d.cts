@@ -46,7 +46,8 @@ declare function DEBUG(name: string, data: any, maxDepth?: number): void;
  *
  * @param name - A string label for the error log.
  * @param error - The error to log. Can be an Error instance or any other type.
+ * @param maxDepth - Maximum recursion depth for nested objects (default: 5).
  */
-declare function ERROR(name: string, error: Error | unknown): void;
+declare function ERROR(name: string, error: Error | unknown, maxDepth?: number): void;
 
 export { DEBUG, ERROR };
