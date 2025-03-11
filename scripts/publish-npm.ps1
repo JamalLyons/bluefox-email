@@ -7,7 +7,7 @@ if (-not $isFinalPublish) {
 }
 
 # Define the relative path to your package directory
-$packagePath = "packages\core"
+$packagePath = "packages\bluefox"
 
 # Change to the package directory
 try {
