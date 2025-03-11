@@ -87,6 +87,12 @@ declare abstract class BluefoxModule {
     protected logDebug(name: string, data: unknown): void;
     protected logError(name: string, error: Error | unknown): void;
     private handleError;
+    protected validateRequiredFields(fields: Record<string, unknown>): void;
+    protected validateEmail(email: string): void;
+    protected validateAttachments(attachments: Array<{
+        fileName: string;
+        content: string;
+    }>): void;
     protected request<T = Json>({ path, method, headers, body, }: RequestOptions): Promise<Result<HttpResponse<T>>>;
     private executeRequest;
     private performRequest;

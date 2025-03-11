@@ -206,31 +206,6 @@ class BluefoxSubscriber extends BluefoxModule {
     return result;
   }
 
-  private validateRequiredFields(fields: Record<string, unknown>): void {
-    this.logDebug("SubscriberValidation.RequiredFields", fields);
-    const missingFields = Object.entries(fields)
-      .filter(([_, value]) => !value)
-      .map(([key]) => key);
-
-    if (missingFields.length > 0) {
-      const error = BluefoxError.validation(
-        `Missing required fields: ${missingFields.join(", ")}`
-      );
-      this.logError("SubscriberValidation.RequiredFields", error);
-      throw error;
-    }
-  }
-
-  private validateEmail(email: string): void {
-    this.logDebug("SubscriberValidation.Email", { email });
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      const error = BluefoxError.validation("Invalid email address format");
-      this.logError("SubscriberValidation.Email", error);
-      throw error;
-    }
-  }
-
   private validateDate(date: Date): void {
     this.logDebug("SubscriberValidation.Date", { date });
     if (!(date instanceof Date) || isNaN(date.getTime())) {
@@ -346,71 +321,5 @@ class BluefoxEmail extends BluefoxModule {
     if (options.attachments) {
       this.validateAttachments(options.attachments);
     }
-  }
-
-  private validateRequiredFields(fields: Record<string, unknown>): void {
-    this.logDebug("EmailValidation.RequiredFields", fields);
-    const missingFields = Object.entries(fields)
-      .filter(([_, value]) => !value)
-      .map(([key]) => key);
-
-    if (missingFields.length > 0) {
-      const error = BluefoxError.validation(
-        `Missing required fields: ${missingFields.join(", ")}`
-      );
-      this.logError("EmailValidation.RequiredFields", error);
-      throw error;
-    }
-  }
-
-  private validateEmail(email: string): void {
-    this.logDebug("EmailValidation.Email", { email });
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      const error = BluefoxError.validation("Invalid email address format");
-      this.logError("EmailValidation.Email", error);
-      throw error;
-    }
-  }
-
-  private validateAttachments(
-    attachments: Array<{ fileName: string; content: string }>
-  ): void {
-    this.logDebug("EmailValidation.Attachments", {
-      count: attachments.length,
-      fileNames: attachments.map((a) => a.fileName),
-    });
-
-    if (!Array.isArray(attachments)) {
-      const error = BluefoxError.validation("Attachments must be an array");
-      this.logError("EmailValidation.Attachments", error);
-      throw error;
-    }
-
-    attachments.forEach((attachment, index) => {
-      if (!attachment.fileName) {
-        const error = BluefoxError.validation(
-          `Missing fileName for attachment at index ${index}`
-        );
-        this.logError("EmailValidation.Attachments", error);
-        throw error;
-      }
-      if (!attachment.content) {
-        const error = BluefoxError.validation(
-          `Missing content for attachment at index ${index}`
-        );
-        this.logError("EmailValidation.Attachments", error);
-        throw error;
-      }
-      try {
-        atob(attachment.content);
-      } catch {
-        const error = BluefoxError.validation(
-          `Invalid base64 content for attachment ${attachment.fileName}`
-        );
-        this.logError("EmailValidation.Attachments", error);
-        throw error;
-      }
-    });
   }
 }

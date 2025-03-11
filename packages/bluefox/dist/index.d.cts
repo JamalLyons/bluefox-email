@@ -104,8 +104,6 @@ declare class BluefoxSubscriber extends BluefoxModule {
      * @throws {BluefoxError} If validation fails or the request fails
      */
     activate(subscriberListId: string, email: string): Promise<Result<HttpResponse<SubscriberResponse>>>;
-    private validateRequiredFields;
-    private validateEmail;
     private validateDate;
 }
 interface EmailResponse {
@@ -164,9 +162,6 @@ declare class BluefoxEmail extends BluefoxModule {
      */
     sendTransactional(options: SendTransactionalOptions): Promise<Result<HttpResponse<EmailResponse>>>;
     private validateTransactionalOptions;
-    private validateRequiredFields;
-    private validateEmail;
-    private validateAttachments;
 }
 
 export { BluefoxClient, type EmailResponse, EmailStatus, type SendTransactionalOptions, type SubscriberResponse, SubscriberStatus };
