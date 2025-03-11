@@ -1,13 +1,8 @@
 # Check if --final flag is provided
 $isFinalPublish = $args -contains "--final"
 
-# Show warning if not running in final mode
-if (-not $isFinalPublish) {
-    Write-Host "Running in dry-run mode. Use --final flag to perform actual publish." -ForegroundColor Yellow
-}
-
 # Define the relative path to your package directory
-$packagePath = "packages\bluefox"
+$packagePath = if ($args.Count -gt 0) { $args[0] } else { "packages\bluefox" }
 
 # Change to the package directory
 try {
@@ -21,10 +16,6 @@ catch {
 # Run pre-publish checks
 try {
     Write-Host "Running pre-publish checks..." -ForegroundColor Cyan
-    
-    # Run formatting
-    Write-Host "Running formatter..." -ForegroundColor Cyan
-    pnpm run format
     
     # Run linting
     Write-Host "Running linter..." -ForegroundColor Cyan
@@ -57,4 +48,9 @@ try {
 catch {
     Write-Host "Failed to publish package: $_" -ForegroundColor Red
     exit 1
+}
+
+# Show warning if not running in final mode
+if (-not $isFinalPublish) {
+    Write-Host "Running in dry-run mode. Use --final flag to perform actual publish." -ForegroundColor Yellow
 }
