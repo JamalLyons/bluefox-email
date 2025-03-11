@@ -16,7 +16,7 @@ The current state of [API](https://bluefox.email/docs/api/) implementation is as
 
 | Feature                    | Status |
 | -------------------------- | ------ |
-| Subscriber List Management | 🟨     |
+| Subscriber List Management | 🟩     |
 | Transactional Emails       | 🟩     |
 | Triggered Email            | 🟥     |
 | Send Attachments           | 🟨     |

@@ -195,7 +195,7 @@ class BluefoxSubscriber extends BluefoxModule {
    * List users on a subscriber list.
    *
    * @param subscriberListId - The ID of the subscriber list
-   * @returns TODO
+   * @returns A promise that resolves to the current subscriber list
    *
    * @throws {BluefoxError} If validation fails or the request fails
    */
@@ -213,8 +213,74 @@ class BluefoxSubscriber extends BluefoxModule {
     this.logDebug("SubscriberList.Result", result);
     return result;
   }
-  public async something2() {}
-  public async something3() {}
+
+  /**
+   * Get a single user from a subscriber list
+   *
+   * @param subscriberListId - The ID of the subscriber list
+   * @param email - The subscriber's email address
+   * @returns A promise that resolves to the subscriber list user
+   *
+   * @throws {BluefoxError} If validation fails or the request fails
+   */
+  public async getOne(
+    subscriberListId: string,
+    email: string
+  ): Promise<Result<HttpResponse<Subscriber>>> {
+    this.logDebug("SubscriberGetOne.input", { subscriberListId, email });
+    this.validateRequiredFields({ subscriberListId, email });
+
+    const result = await this.request<Subscriber>({
+      path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}/${email}`,
+      method: "GET",
+    });
+
+    this.logDebug("SubscriberGetOne.Result", result);
+    return result;
+  }
+
+  /**
+   * Update a single user from a subscriber list
+   *
+   * @param subscriberListId - The ID of the subscriber list
+   * @param email - The subscriber's email address
+   * @returns  A promise that resolves to the updated subscriber details
+   *
+   * @throws {BluefoxError} If validation fails or the request fails
+   */
+  public async updateOne(
+    subscriberListId: string,
+    email: string,
+    newEmail?: string,
+    newName?: string
+  ): Promise<Result<HttpResponse<Subscriber>>> {
+    this.logDebug("SubscriberUpdateOne.input", {
+      subscriberListId,
+      email,
+      newEmail,
+      newName,
+    });
+    this.validateRequiredFields({ subscriberListId, email });
+
+    // Only update fields the user wants.
+    // Im not sure if undefined props will delete old data...need to ask bluefox team
+    let body: any = {};
+    if (newEmail) {
+      body.email = newEmail;
+    }
+    if (newName) {
+      body.name = newName;
+    }
+
+    const result = await this.request<Subscriber>({
+      path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}/${email}`,
+      method: "GET",
+      body,
+    });
+
+    this.logDebug("SubscriberUpdateOne.Result", result);
+    return result;
+  }
 
   private validateDate(date: Date): void {
     this.logDebug("SubscriberValidation.Date", { date });

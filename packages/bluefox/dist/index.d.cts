@@ -116,13 +116,31 @@ declare class BluefoxSubscriber extends BluefoxModule {
      * List users on a subscriber list.
      *
      * @param subscriberListId - The ID of the subscriber list
-     * @returns TODO
+     * @returns A promise that resolves to the current subscriber list
      *
      * @throws {BluefoxError} If validation fails or the request fails
      */
     list(subscriberListId: string): Promise<Result<HttpResponse<SubscriberList>>>;
-    something2(): Promise<void>;
-    something3(): Promise<void>;
+    /**
+     * Get a single user from a subscriber list
+     *
+     * @param subscriberListId - The ID of the subscriber list
+     * @param email - The subscriber's email address
+     * @returns A promise that resolves to the subscriber list user
+     *
+     * @throws {BluefoxError} If validation fails or the request fails
+     */
+    getOne(subscriberListId: string, email: string): Promise<Result<HttpResponse<Subscriber>>>;
+    /**
+     * Update a single user from a subscriber list
+     *
+     * @param subscriberListId - The ID of the subscriber list
+     * @param email - The subscriber's email address
+     * @returns  A promise that resolves to the updated subscriber details
+     *
+     * @throws {BluefoxError} If validation fails or the request fails
+     */
+    updateOne(subscriberListId: string, email: string, newEmail?: string, newName?: string): Promise<Result<HttpResponse<Subscriber>>>;
     private validateDate;
 }
 interface EmailResponse {
