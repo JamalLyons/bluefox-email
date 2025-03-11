@@ -1,6 +1,28 @@
 import { BluefoxModule, BluefoxContext, Result, HttpResponse, BluefoxClientConfig } from '@bluefox-email/api';
 
 /**
+ * I made this type from reading the debug logs from testing.
+ * Not 100% sure if this is accurate
+ */
+interface Subscriber {
+    _id: string;
+    accountId: string;
+    projectId: string;
+    subscriberListId: string;
+    name: string;
+    email: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    pausedUntil?: string;
+}
+interface SubscriberList {
+    items: Subscriber[];
+    count: number;
+}
+
+/**
  * A client for the Bluefox.email API.
  *
  * @example
@@ -35,20 +57,6 @@ declare class BluefoxClient extends BluefoxModule {
     readonly email: BluefoxEmail;
     constructor(config: BluefoxClientConfig);
 }
-interface SubscriberResponse {
-    id: string;
-    email: string;
-    name: string;
-    status: SubscriberStatus;
-    pausedUntil?: string;
-    createdAt: string;
-    updatedAt: string;
-}
-declare enum SubscriberStatus {
-    Active = "active",
-    Unsubscribed = "unsubscribed",
-    Paused = "paused"
-}
 /**
  * Module for managing subscribers.
  */
@@ -72,7 +80,7 @@ declare class BluefoxSubscriber extends BluefoxModule {
      * }
      * ```
      */
-    add(subscriberListId: string, name: string, email: string): Promise<Result<HttpResponse<SubscriberResponse>>>;
+    add(subscriberListId: string, name: string, email: string): Promise<Result<HttpResponse<Subscriber>>>;
     /**
      * Unsubscribes a member from the specified subscriber list.
      *
@@ -82,7 +90,7 @@ declare class BluefoxSubscriber extends BluefoxModule {
      *
      * @throws {BluefoxError} If validation fails or the request fails
      */
-    remove(subscriberListId: string, email: string): Promise<Result<HttpResponse<SubscriberResponse>>>;
+    remove(subscriberListId: string, email: string): Promise<Result<HttpResponse<Subscriber>>>;
     /**
      * Pauses a member's subscription until the specified date.
      *
@@ -93,7 +101,7 @@ declare class BluefoxSubscriber extends BluefoxModule {
      *
      * @throws {BluefoxError} If validation fails or the request fails
      */
-    pause(subscriberListId: string, email: string, date: Date): Promise<Result<HttpResponse<SubscriberResponse>>>;
+    pause(subscriberListId: string, email: string, date: Date): Promise<Result<HttpResponse<Subscriber>>>;
     /**
      * Activates a paused or unsubscribed member.
      *
@@ -103,7 +111,18 @@ declare class BluefoxSubscriber extends BluefoxModule {
      *
      * @throws {BluefoxError} If validation fails or the request fails
      */
-    activate(subscriberListId: string, email: string): Promise<Result<HttpResponse<SubscriberResponse>>>;
+    activate(subscriberListId: string, email: string): Promise<Result<HttpResponse<Subscriber>>>;
+    /**
+     * List users on a subscriber list.
+     *
+     * @param subscriberListId - The ID of the subscriber list
+     * @returns TODO
+     *
+     * @throws {BluefoxError} If validation fails or the request fails
+     */
+    list(subscriberListId: string): Promise<Result<HttpResponse<SubscriberList>>>;
+    something2(): Promise<void>;
+    something3(): Promise<void>;
     private validateDate;
 }
 interface EmailResponse {
@@ -164,4 +183,4 @@ declare class BluefoxEmail extends BluefoxModule {
     private validateTransactionalOptions;
 }
 
-export { BluefoxClient, type EmailResponse, EmailStatus, type SendTransactionalOptions, type SubscriberResponse, SubscriberStatus };
+export { BluefoxClient, type EmailResponse, EmailStatus, type SendTransactionalOptions };

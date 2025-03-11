@@ -148,9 +148,19 @@ async function testTransactionalEmail() {
   }
 }
 
+async function testSubscriptionList() {
+  const data = await client.subscriber.list(SUBSCRIPTION_LIST);
+  if (data.ok) {
+    DEBUG("SUBSCRIBER LIST", data.value.data, 20);
+  } else {
+    ERROR("SUBSCRIBER LIST ERROR", data.error);
+  }
+}
+
 async function runTests() {
-  await testSubscriptionManagement();
-  await testTransactionalEmail();
+  // await testSubscriptionManagement();
+  // await testTransactionalEmail();
+  // await testSubscriptionList()
 }
 
 runTests().catch((error: unknown) => {

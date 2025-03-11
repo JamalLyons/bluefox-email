@@ -8,6 +8,7 @@ import {
   BluefoxEndpoints,
   BluefoxClientConfig,
 } from "@bluefox-email/api";
+import { Subscriber, SubscriberList, SubscriberStatus } from "./types.js";
 
 /**
  * A client for the Bluefox.email API.
@@ -58,22 +59,6 @@ export class BluefoxClient extends BluefoxModule {
   }
 }
 
-export interface SubscriberResponse {
-  id: string;
-  email: string;
-  name: string;
-  status: SubscriberStatus;
-  pausedUntil?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export enum SubscriberStatus {
-  Active = "active",
-  Unsubscribed = "unsubscribed",
-  Paused = "paused",
-}
-
 /**
  * Module for managing subscribers.
  */
@@ -104,12 +89,12 @@ class BluefoxSubscriber extends BluefoxModule {
     subscriberListId: string,
     name: string,
     email: string
-  ): Promise<Result<HttpResponse<SubscriberResponse>>> {
+  ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberAdd.Input", { subscriberListId, name, email });
     this.validateRequiredFields({ subscriberListId, name, email });
     this.validateEmail(email);
 
-    const result = await this.request<SubscriberResponse>({
+    const result = await this.request<Subscriber>({
       path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}`,
       method: "POST",
       body: { name, email },
@@ -131,12 +116,12 @@ class BluefoxSubscriber extends BluefoxModule {
   public async remove(
     subscriberListId: string,
     email: string
-  ): Promise<Result<HttpResponse<SubscriberResponse>>> {
+  ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberRemove.Input", { subscriberListId, email });
     this.validateRequiredFields({ subscriberListId, email });
     this.validateEmail(email);
 
-    const result = await this.request<SubscriberResponse>({
+    const result = await this.request<Subscriber>({
       path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}/${email}`,
       method: "PATCH",
       body: { status: SubscriberStatus.Unsubscribed },
@@ -160,13 +145,13 @@ class BluefoxSubscriber extends BluefoxModule {
     subscriberListId: string,
     email: string,
     date: Date
-  ): Promise<Result<HttpResponse<SubscriberResponse>>> {
+  ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberPause.Input", { subscriberListId, email, date });
     this.validateRequiredFields({ subscriberListId, email });
     this.validateEmail(email);
     this.validateDate(date);
 
-    const result = await this.request<SubscriberResponse>({
+    const result = await this.request<Subscriber>({
       path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}/${email}`,
       method: "PATCH",
       body: {
@@ -191,12 +176,12 @@ class BluefoxSubscriber extends BluefoxModule {
   public async activate(
     subscriberListId: string,
     email: string
-  ): Promise<Result<HttpResponse<SubscriberResponse>>> {
+  ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberActivate.Input", { subscriberListId, email });
     this.validateRequiredFields({ subscriberListId, email });
     this.validateEmail(email);
 
-    const result = await this.request<SubscriberResponse>({
+    const result = await this.request<Subscriber>({
       path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}/${email}`,
       method: "PATCH",
       body: { status: SubscriberStatus.Active },
@@ -205,6 +190,31 @@ class BluefoxSubscriber extends BluefoxModule {
     this.logDebug("SubscriberActivate.Result", result);
     return result;
   }
+
+  /**
+   * List users on a subscriber list.
+   *
+   * @param subscriberListId - The ID of the subscriber list
+   * @returns TODO
+   *
+   * @throws {BluefoxError} If validation fails or the request fails
+   */
+  public async list(
+    subscriberListId: string
+  ): Promise<Result<HttpResponse<SubscriberList>>> {
+    this.logDebug("SubscriberList.input", { subscriberListId });
+    this.validateRequiredFields({ subscriberListId });
+
+    const result = await this.request<SubscriberList>({
+      path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}`,
+      method: "GET",
+    });
+
+    this.logDebug("SubscriberList.Result", result);
+    return result;
+  }
+  public async something2() {}
+  public async something3() {}
 
   private validateDate(date: Date): void {
     this.logDebug("SubscriberValidation.Date", { date });
