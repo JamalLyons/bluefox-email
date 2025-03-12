@@ -15,14 +15,14 @@
     "url": "https://github.com/JamalLyons/bluefox-email/issues"
   },
   "sideEffects": false,
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/api.js",
+  "module": "./dist/api.js",
+  "types": "./dist/api.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "types": "./dist/api.d.ts",
+      "import": "./dist/api.js",
+      "require": "./dist/api.cjs"
     }
   },
   "files": [
@@ -41,8 +41,8 @@
     "typescript"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/api.ts --format cjs,esm --dts",
+    "dev": "tsup src/api.ts --format cjs,esm --dts --watch",
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",

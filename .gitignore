@@ -25,9 +25,9 @@ coverage
 .next/
 out/
 build
-/packages/*/dist/index.cjs
-/packages/*/dist/index.js
-/packages/*/dist/index.d.cts
+/packages/*/dist/*.cjs
+/packages/*/dist/*.js
+/packages/*/dist/*.d.cts
 /packages/test/dist
 
 # Misc
