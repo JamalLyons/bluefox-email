@@ -2,7 +2,7 @@ import "dotenv/config";
 
 const env = {
   API_KEY: process.env.BLUEFOX_API_KEY,
-  SUBSCRIPTION_LIST: process.env.SUBSCRIBER_LIST,
+  SUBSCRIBER_LIST: process.env.SUBSCRIBER_LIST,
   EMAIL_ADDRESS: process.env.EMAIL_ADDRESS,
   TRANSACTIONAL_ID: process.env.TRANSACTIONAL_ID,
 } as const;

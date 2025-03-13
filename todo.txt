@@ -1,1 +1,2 @@
 - allow the request re-try logic to be disabled by the user. They can pass 0 and a fetch will be made only once always.
+- make sure test really work lol. I got a little lazy and made cursor write these test... plus im not really sure how to test webhooks programmatically yet..
