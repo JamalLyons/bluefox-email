@@ -63,6 +63,11 @@ interface SendTriggeredOptions {
         content: string;
     }>;
 }
+interface ValidateWebhookOptions {
+    request: Request;
+    /** By default the API  */
+    apiKeyOverride?: string;
+}
 
 /**
  * A client for the Bluefox.email API.
@@ -93,10 +98,15 @@ declare class BluefoxClient extends BluefoxModule {
      */
     readonly subscriber: BluefoxSubscriber;
     /**
-     * Module for sending emails.
+     * Module for sending transactional and triggered emails.
      * @see https://bluefox.email/docs/api/send-transactional-email
      */
     readonly email: BluefoxEmail;
+    /**
+     * Module for managing webhooks.
+     * @see https://bluefox.email/docs/integrations/webhooks
+     */
+    readonly webhooks: BluefoxWebhooks;
     constructor(config: BluefoxClientConfig);
 }
 /**
@@ -234,6 +244,10 @@ declare class BluefoxEmail extends BluefoxModule {
     sendTriggered(options: SendTriggeredOptions): Promise<Result<HttpResponse<EmailResponse>>>;
     private validateTransactionalOptions;
     private validateTriggeredOptions;
+}
+declare class BluefoxWebhooks extends BluefoxModule {
+    constructor(context: BluefoxContext);
+    validateWebhook(options: ValidateWebhookOptions): Promise<boolean>;
 }
 
 export { BluefoxClient };
