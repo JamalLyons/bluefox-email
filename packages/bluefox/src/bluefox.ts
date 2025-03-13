@@ -290,7 +290,7 @@ class BluefoxSubscriber extends BluefoxModule {
 
     const result = await this.request<Subscriber>({
       path: `${BluefoxEndpoints.subscriberLists}/${subscriberListId}/${email}`,
-      method: "GET",
+      method: "PATCH",
       body,
     });
 

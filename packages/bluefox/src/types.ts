@@ -9,7 +9,7 @@ export interface Subscriber {
   subscriberListId: string;
   name: string;
   email: string;
-  status: string; // e.g., "active", "paused"
+  status: SubscriberStatus;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
   __v: number; // Version key

@@ -35,6 +35,9 @@ export enum ErrorCode {
   TIMEOUT_ERROR = "TIMEOUT_ERROR",
   SERVER_ERROR = "SERVER_ERROR",
   UNKNOWN_ERROR = "UNKNOWN_ERROR",
+  METHOD_NOT_ALLOWED = "METHOD_NOT_ALLOWED",
+  DUPLICATE_EMAIL = "DUPLICATE_EMAIL",
+  INVALID_DATE = "INVALID_DATE",
 }
 
 export interface ErrorDetails {
@@ -75,6 +78,42 @@ export class BluefoxError extends Error {
       message: `Rate limit exceeded. Resets at ${new Date(reset).toISOString()}`,
       status: 429,
       details: { reset },
+    });
+  }
+
+  static duplicateEmail(
+    email: string,
+    details?: Record<string, unknown>
+  ): BluefoxError {
+    return new BluefoxError({
+      code: ErrorCode.DUPLICATE_EMAIL,
+      message: `Email already exists: ${email}`,
+      status: 400,
+      details,
+    });
+  }
+
+  static invalidDate(
+    message: string = "The pausedUntil date must be set in the future.",
+    details?: Record<string, unknown>
+  ): BluefoxError {
+    return new BluefoxError({
+      code: ErrorCode.INVALID_DATE,
+      message,
+      status: 400,
+      details,
+    });
+  }
+
+  static methodNotAllowed(
+    message: string = "The provided email has been flagged due to bouncing. If this is incorrect and the email is valid, please contact support.",
+    details?: Record<string, unknown>
+  ): BluefoxError {
+    return new BluefoxError({
+      code: ErrorCode.METHOD_NOT_ALLOWED,
+      message,
+      status: 405,
+      details,
     });
   }
 }
@@ -416,9 +455,46 @@ export abstract class BluefoxModule {
       errorData = { message: response.statusText };
     }
 
+    // Check for specific Bluefox API error types
+    if (errorData.error && errorData.error.name) {
+      const errorName = errorData.error.name;
+      const errorMessage = errorData.error.message || response.statusText;
+
+      switch (errorName) {
+        case "VALIDATION_ERROR":
+          if (errorMessage.includes("Email already exists")) {
+            return new BluefoxError({
+              code: ErrorCode.DUPLICATE_EMAIL,
+              message: errorMessage,
+              status: response.status,
+              details: errorData,
+            });
+          } else if (errorMessage.includes("pausedUntil date")) {
+            return new BluefoxError({
+              code: ErrorCode.INVALID_DATE,
+              message: errorMessage,
+              status: response.status,
+              details: errorData,
+            });
+          }
+          break;
+        case "METHOD_NOT_ALLOWED":
+          if (errorMessage.includes("flagged due to bouncing")) {
+            return new BluefoxError({
+              code: ErrorCode.METHOD_NOT_ALLOWED,
+              message: errorMessage,
+              status: response.status,
+              details: errorData,
+            });
+          }
+          break;
+      }
+    }
+
     return new BluefoxError({
       code: this.getErrorCodeFromStatus(response.status),
-      message: errorData.message || response.statusText,
+      message:
+        errorData.error?.message || errorData.message || response.statusText,
       status: response.status,
       details: errorData,
     });
@@ -427,6 +503,8 @@ export abstract class BluefoxModule {
   private getErrorCodeFromStatus(status: number): ErrorCode {
     if (status === 429) return ErrorCode.RATE_LIMIT_ERROR;
     if (status === 401 || status === 403) return ErrorCode.AUTHENTICATION_ERROR;
+    if (status === 405) return ErrorCode.METHOD_NOT_ALLOWED;
+    if (status === 400) return ErrorCode.VALIDATION_ERROR;
     if (status >= 500) return ErrorCode.SERVER_ERROR;
     return ErrorCode.UNKNOWN_ERROR;
   }
