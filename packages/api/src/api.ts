@@ -38,6 +38,9 @@ export enum ErrorCode {
   METHOD_NOT_ALLOWED = "METHOD_NOT_ALLOWED",
   DUPLICATE_EMAIL = "DUPLICATE_EMAIL",
   INVALID_DATE = "INVALID_DATE",
+  INSUFFICIENT_CREDITS = "INSUFFICIENT_CREDITS",
+  MISSING_AWS_CONFIG = "MISSING_AWS_CONFIG",
+  MISSING_PARAMETERS = "MISSING_PARAMETERS",
 }
 
 export interface ErrorDetails {
@@ -113,6 +116,36 @@ export class BluefoxError extends Error {
       code: ErrorCode.METHOD_NOT_ALLOWED,
       message,
       status: 405,
+      details,
+    });
+  }
+
+  static insufficientCredits(details?: Record<string, unknown>): BluefoxError {
+    return new BluefoxError({
+      code: ErrorCode.INSUFFICIENT_CREDITS,
+      message: "Insufficient credits available.",
+      status: 405,
+      details,
+    });
+  }
+
+  static missingAwsConfig(details?: Record<string, unknown>): BluefoxError {
+    return new BluefoxError({
+      code: ErrorCode.MISSING_AWS_CONFIG,
+      message: "Project Email AWS configurations not found.",
+      status: 400,
+      details,
+    });
+  }
+
+  static missingParameters(
+    message: string = "Missing required parameters: email and transactionalId.",
+    details?: Record<string, unknown>
+  ): BluefoxError {
+    return new BluefoxError({
+      code: ErrorCode.MISSING_PARAMETERS,
+      message,
+      status: 400,
       details,
     });
   }
@@ -476,12 +509,33 @@ export abstract class BluefoxModule {
               status: response.status,
               details: errorData,
             });
+          } else if (errorMessage.includes("AWS configurations not found")) {
+            return new BluefoxError({
+              code: ErrorCode.MISSING_AWS_CONFIG,
+              message: errorMessage,
+              status: response.status,
+              details: errorData,
+            });
+          } else if (errorMessage.includes("Missing required parameters")) {
+            return new BluefoxError({
+              code: ErrorCode.MISSING_PARAMETERS,
+              message: errorMessage,
+              status: response.status,
+              details: errorData,
+            });
           }
           break;
         case "METHOD_NOT_ALLOWED":
           if (errorMessage.includes("flagged due to bouncing")) {
             return new BluefoxError({
               code: ErrorCode.METHOD_NOT_ALLOWED,
+              message: errorMessage,
+              status: response.status,
+              details: errorData,
+            });
+          } else if (errorMessage.includes("Insufficient credits")) {
+            return new BluefoxError({
+              code: ErrorCode.INSUFFICIENT_CREDITS,
               message: errorMessage,
               status: response.status,
               details: errorData,

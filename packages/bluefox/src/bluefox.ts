@@ -338,7 +338,7 @@ class BluefoxEmail extends BluefoxModule {
    *   data: { name: "John" }
    * });
    * if (result.ok) {
-   *   console.log("Email sent:", result.value.data);
+   *   console.log("Email sent successfully:", result.value.data.success);
    * }
    * ```
    */
@@ -355,7 +355,7 @@ class BluefoxEmail extends BluefoxModule {
         email: options.to,
         transactionalId: options.transactionalId,
         data: options.data,
-        arguments: options.attachments,
+        attachments: options.attachments,
       },
     });
 
@@ -379,11 +379,13 @@ class BluefoxEmail extends BluefoxModule {
    *   data: { name: "John" }
    * });
    * if (result.ok) {
-   *   console.log("Email sent:", result.value.data);
+   *   console.log("Email sent successfully:", result.value.data.success);
    * }
    * ```
    */
-  public async sendTriggered(options: SendTriggeredOptions) {
+  public async sendTriggered(
+    options: SendTriggeredOptions
+  ): Promise<Result<HttpResponse<EmailResponse>>> {
     this.logDebug("SendTriggered.Input", options);
     this.validateTriggeredOptions(options);
 
@@ -394,7 +396,7 @@ class BluefoxEmail extends BluefoxModule {
         email: options.to,
         triggerId: options.triggerId,
         data: options.data,
-        arguments: options.attachments,
+        attachments: options.attachments,
       },
     });
 
@@ -414,11 +416,24 @@ class BluefoxEmail extends BluefoxModule {
     });
 
     // Validate email format
-    this.validateEmail(options.to);
+    try {
+      this.validateEmail(options.to);
+    } catch (error) {
+      this.logError("EmailValidation.TransactionalOptions.Email", error);
+      throw error;
+    }
 
     // Validate attachments if present
     if (options.attachments) {
-      this.validateAttachments(options.attachments);
+      try {
+        this.validateAttachments(options.attachments);
+      } catch (error) {
+        this.logError(
+          "EmailValidation.TransactionalOptions.Attachments",
+          error
+        );
+        throw error;
+      }
     }
   }
 
@@ -432,11 +447,21 @@ class BluefoxEmail extends BluefoxModule {
     });
 
     // Validate email format
-    this.validateEmail(options.to);
+    try {
+      this.validateEmail(options.to);
+    } catch (error) {
+      this.logError("EmailValidation.TriggeredOptions.Email", error);
+      throw error;
+    }
 
     // Validate attachments if present
     if (options.attachments) {
-      this.validateAttachments(options.attachments);
+      try {
+        this.validateAttachments(options.attachments);
+      } catch (error) {
+        this.logError("EmailValidation.TriggeredOptions.Attachments", error);
+        throw error;
+      }
     }
   }
 }

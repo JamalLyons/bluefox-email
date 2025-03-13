@@ -27,15 +27,12 @@ export enum SubscriberStatus {
   Paused = "paused",
 }
 
+/**
+ * Response from sending a transactional or triggered email.
+ * Based on the Bluefox API response format.
+ */
 export interface EmailResponse {
-  id: string;
-  to: string;
-  subject: string;
-  status: EmailStatus;
-  sentAt?: string;
-  deliveredAt?: string;
-  openedAt?: string;
-  clickedAt?: string;
+  success: boolean;
 }
 
 export enum EmailStatus {
