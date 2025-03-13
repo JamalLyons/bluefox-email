@@ -19,8 +19,8 @@ The current state of [API](https://bluefox.email/docs/api/) implementation is as
 | Subscriber List Management | 🟩     |
 | Transactional Emails       | 🟩     |
 | Triggered Email            | 🟩     |
-| Send Attachments           | 🟨     |
-| Webhooks                   | 🟥     |
+| Send Attachments           | 🟩     |
+| Webhooks                   | 🟩     |
 
 ## Installation
 
@@ -31,14 +31,14 @@ pnpm add bluefox-email
 ## Usage
 
 ```typescript
-import { bluefox } from "bluefox-email";
+import { BluefoxClient } from "bluefox-email";
 
-const client = bluefox({
+const client = new BluefoxClient({
   apiKey: process.env.BLUEFOX_EMAIL_API_KEY,
 });
 
 await client.email.sendTransactional({
-  to: "john@example",
+  to: "john@example.com",
   transactionalId: "welcome-email",
   data: { name: "John" },
 });
