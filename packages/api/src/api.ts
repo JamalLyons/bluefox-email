@@ -14,7 +14,7 @@ export interface RequestOptions {
   path: string;
   method: HttpMethod;
   headers?: Record<string, string>;
-  body: Record<string, unknown>;
+  body?: Record<string, unknown>;
   timeout?: number;
   retries?: number;
 }
@@ -244,7 +244,7 @@ export abstract class BluefoxModule {
       path,
       method,
       headers,
-      body: stripUndefinedKeys(body),
+      body: body ? stripUndefinedKeys(body) : undefined,
     };
 
     this.logDebug("Request", {
