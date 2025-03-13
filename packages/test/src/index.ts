@@ -117,10 +117,6 @@ async function testTransactionalEmail() {
         "EmailSent",
         {
           email,
-          status: email.status,
-          deliveredAt: email.deliveredAt
-            ? new Date(email.deliveredAt).toLocaleString()
-            : null,
         },
         10
       );

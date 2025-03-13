@@ -17,6 +17,9 @@ import {
   SubscriberList,
   SubscriberStatus,
   ValidateWebhookOptions,
+  WebhookEvent,
+  WebhookEventType,
+  HandleWebhookOptions,
 } from "./types.js";
 
 /**
@@ -480,12 +483,30 @@ class BluefoxWebhooks extends BluefoxModule {
     super(context);
   }
 
+  /**
+   * Validates a webhook request by checking the API key in the Authorization header
+   *
+   * @param options - Options for validating the webhook
+   * @returns A promise that resolves to true if the webhook is valid
+   *
+   * @throws {BluefoxError} If validation fails
+   *
+   * @example
+   * ```typescript
+   * const isValid = await client.webhooks.validateWebhook({
+   *   request: req,
+   *   validApiKeys: ['primary-key', 'secondary-key'] // Support for key rotation
+   * });
+   * ```
+   */
   public async validateWebhook(
-    options: ValidateWebhookOptions
+    options: ValidateWebhookOptions & { validApiKeys?: string[] }
   ): Promise<boolean> {
-    const API_KEY = options.apiKeyOverride || this.context.config.apiKey;
+    const primaryApiKey = options.apiKeyOverride || this.context.config.apiKey;
+    const validApiKeys = options.validApiKeys || [primaryApiKey];
+
     this.validateRequiredFields({
-      apiKey: API_KEY,
+      apiKey: primaryApiKey,
       request: options.request,
     });
 
@@ -502,15 +523,325 @@ class BluefoxWebhooks extends BluefoxModule {
       });
     }
 
-    if (API_KEY !== headerApiKey) {
+    if (!validApiKeys.includes(headerApiKey)) {
       throw new BluefoxError({
         code: ErrorCode.AUTHENTICATION_ERROR,
-        message: "API keys do not match",
+        message: "Invalid API key",
         status: 400,
         details: { request: options.request },
       });
     }
 
     return true;
+  }
+
+  /**
+   * Parses a webhook request into a WebhookEvent object
+   *
+   * @param request - The webhook request
+   * @returns A promise that resolves to the parsed webhook event
+   *
+   * @throws {BluefoxError} If parsing fails
+   *
+   * @example
+   * ```typescript
+   * const event = await client.webhooks.parseWebhookEvent(req);
+   * console.log(`Received ${event.type} event`);
+   * ```
+   */
+  public async parseWebhookEvent(request: Request): Promise<WebhookEvent> {
+    try {
+      const event = (await request.json()) as WebhookEvent;
+      this.logDebug("WebhookEvent.Parsed", event);
+      return event;
+    } catch (error) {
+      this.logError("WebhookEvent.ParseError", error);
+      throw new BluefoxError({
+        code: ErrorCode.SERVER_ERROR,
+        message: "Failed to parse webhook event",
+        status: 400,
+        details: { error },
+      });
+    }
+  }
+
+  /**
+   * Handles a webhook request by validating it, parsing the event, and calling the appropriate handler
+   *
+   * @param options - Options for handling the webhook
+   * @returns A promise that resolves to the parsed webhook event
+   *
+   * @throws {BluefoxError} If validation or parsing fails
+   *
+   * @example
+   * ```typescript
+   * const event = await client.webhooks.handleWebhook({
+   *   request: req,
+   *   handlers: {
+   *     [WebhookEventType.Open]: async (event) => {
+   *       console.log(`Email opened by ${event.emailData?.to}`);
+   *     },
+   *     [WebhookEventType.Click]: async (event) => {
+   *       console.log(`Link clicked: ${event.link}`);
+   *     }
+   *   }
+   * });
+   * ```
+   */
+  public async handleWebhook(
+    options: HandleWebhookOptions
+  ): Promise<WebhookEvent> {
+    this.logDebug("WebhookHandler.Input", options);
+
+    // Validate the webhook first
+    await this.validateWebhook({
+      request: options.request,
+      apiKeyOverride: options.apiKeyOverride,
+      validApiKeys: options.validApiKeys,
+    });
+
+    // Parse the event
+    const event = await this.parseWebhookEvent(options.request);
+
+    // Call the appropriate handler if provided
+    if (options.handlers && options.handlers[event.type]) {
+      try {
+        await options.handlers[event.type]!(event);
+      } catch (error) {
+        this.logError("WebhookHandler.HandlerError", error);
+        // We don't throw here to ensure the webhook is acknowledged
+      }
+    }
+
+    return event;
+  }
+
+  /**
+   * Checks if the event is an email-related event (sent, failed, click, open, bounce, complaint)
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is an email-related event
+   *
+   * @example
+   * ```typescript
+   * const event = await client.webhooks.parseWebhookEvent(req);
+   * if (client.webhooks.isEmailEvent(event)) {
+   *   console.log(`Email event for ${event.emailData?.to}`);
+   * }
+   * ```
+   */
+  public isEmailEvent(event: WebhookEvent): boolean {
+    return [
+      WebhookEventType.Sent,
+      WebhookEventType.Failed,
+      WebhookEventType.Click,
+      WebhookEventType.Open,
+      WebhookEventType.Bounce,
+      WebhookEventType.Complaint,
+    ].includes(event.type as WebhookEventType);
+  }
+
+  /**
+   * Checks if the event is a subscription-related event (subscribe, unsubscribe, pause-subscription, resubscribe)
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is a subscription-related event
+   *
+   * @example
+   * ```typescript
+   * const event = await client.webhooks.parseWebhookEvent(req);
+   * if (client.webhooks.isSubscriptionEvent(event)) {
+   *   console.log(`Subscription event for ${event.subscription?.email}`);
+   * }
+   * ```
+   */
+  public isSubscriptionEvent(event: WebhookEvent): boolean {
+    return [
+      WebhookEventType.Subscribe,
+      WebhookEventType.Unsubscribe,
+      WebhookEventType.PauseSubscription,
+      WebhookEventType.Resubscribe,
+    ].includes(event.type as WebhookEventType);
+  }
+
+  /**
+   * Type guard for sent events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is a sent event
+   *
+   * @example
+   * ```typescript
+   * const event = await client.webhooks.parseWebhookEvent(req);
+   * if (client.webhooks.isSentEvent(event)) {
+   *   console.log(`Email sent to ${event.emailData?.to} at ${event.emailData?.sentAt}`);
+   * }
+   * ```
+   */
+  public isSentEvent(
+    event: WebhookEvent
+  ): event is WebhookEvent & { type: WebhookEventType.Sent } {
+    return event.type === WebhookEventType.Sent;
+  }
+
+  /**
+   * Type guard for failed events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is a failed event
+   */
+  public isFailedEvent(event: WebhookEvent): event is WebhookEvent & {
+    type: WebhookEventType.Failed;
+    errors: any[];
+  } {
+    return event.type === WebhookEventType.Failed;
+  }
+
+  /**
+   * Type guard for click events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is a click event
+   */
+  public isClickEvent(event: WebhookEvent): event is WebhookEvent & {
+    type: WebhookEventType.Click;
+    link: string;
+    blockPosition?: string;
+    blockName?: string;
+  } {
+    return event.type === WebhookEventType.Click;
+  }
+
+  /**
+   * Type guard for open events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is an open event
+   */
+  public isOpenEvent(event: WebhookEvent): event is WebhookEvent & {
+    type: WebhookEventType.Open;
+  } {
+    return event.type === WebhookEventType.Open;
+  }
+
+  /**
+   * Type guard for bounce events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is a bounce event
+   */
+  public isBounceEvent(event: WebhookEvent): event is WebhookEvent & {
+    type: WebhookEventType.Bounce;
+  } {
+    return event.type === WebhookEventType.Bounce;
+  }
+
+  /**
+   * Type guard for complaint events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is a complaint event
+   */
+  public isComplaintEvent(event: WebhookEvent): event is WebhookEvent & {
+    type: WebhookEventType.Complaint;
+  } {
+    return event.type === WebhookEventType.Complaint;
+  }
+
+  /**
+   * Type guard for subscription events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is a subscription event
+   */
+  public isSubscribeEvent(event: WebhookEvent): event is WebhookEvent & {
+    type: WebhookEventType.Subscribe;
+    subscription: NonNullable<WebhookEvent["subscription"]>;
+  } {
+    return event.type === WebhookEventType.Subscribe;
+  }
+
+  /**
+   * Type guard for unsubscribe events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is an unsubscribe event
+   */
+  public isUnsubscribeEvent(event: WebhookEvent): event is WebhookEvent & {
+    type: WebhookEventType.Unsubscribe;
+    subscription: NonNullable<WebhookEvent["subscription"]>;
+  } {
+    return event.type === WebhookEventType.Unsubscribe;
+  }
+
+  /**
+   * Type guard for pause subscription events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is a pause subscription event
+   */
+  public isPauseSubscriptionEvent(
+    event: WebhookEvent
+  ): event is WebhookEvent & {
+    type: WebhookEventType.PauseSubscription;
+    subscription: NonNullable<WebhookEvent["subscription"]>;
+  } {
+    return event.type === WebhookEventType.PauseSubscription;
+  }
+
+  /**
+   * Type guard for resubscribe events
+   *
+   * @param event - The webhook event to check
+   * @returns True if the event is a resubscribe event
+   */
+  public isResubscribeEvent(event: WebhookEvent): event is WebhookEvent & {
+    type: WebhookEventType.Resubscribe;
+    subscription: NonNullable<WebhookEvent["subscription"]>;
+  } {
+    return event.type === WebhookEventType.Resubscribe;
+  }
+
+  /**
+   * Tests a webhook by sending a test event to the specified URL
+   *
+   * @param webhookUrl - The URL to send the test event to
+   * @param eventType - The type of event to send
+   * @param customData - Custom data to include in the event
+   * @returns A promise that resolves to the response from the webhook URL
+   *
+   * @throws {BluefoxError} If the request fails
+   *
+   * @example
+   * ```typescript
+   * const result = await client.webhooks.testWebhook(
+   *   'https://example.com/webhooks/bluefox',
+   *   WebhookEventType.Open,
+   *   { emailData: { to: 'test@example.com' } }
+   * );
+   * if (result.ok) {
+   *   console.log('Test webhook sent successfully');
+   * }
+   * ```
+   */
+  public async testWebhook(
+    webhookUrl: string,
+    eventType: WebhookEventType | string,
+    customData?: Partial<WebhookEvent>
+  ): Promise<Result<HttpResponse<any>>> {
+    this.logDebug("TestWebhook.Input", { webhookUrl, eventType, customData });
+
+    const result = await this.request({
+      path: "test-webhook",
+      method: "POST",
+      body: {
+        webhookUrl,
+        eventType,
+        customData,
+      },
+    });
+
+    this.logDebug("TestWebhook.Result", result);
+    return result;
   }
 }

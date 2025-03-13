@@ -25,7 +25,13 @@ declare enum ErrorCode {
     NETWORK_ERROR = "NETWORK_ERROR",
     TIMEOUT_ERROR = "TIMEOUT_ERROR",
     SERVER_ERROR = "SERVER_ERROR",
-    UNKNOWN_ERROR = "UNKNOWN_ERROR"
+    UNKNOWN_ERROR = "UNKNOWN_ERROR",
+    METHOD_NOT_ALLOWED = "METHOD_NOT_ALLOWED",
+    DUPLICATE_EMAIL = "DUPLICATE_EMAIL",
+    INVALID_DATE = "INVALID_DATE",
+    INSUFFICIENT_CREDITS = "INSUFFICIENT_CREDITS",
+    MISSING_AWS_CONFIG = "MISSING_AWS_CONFIG",
+    MISSING_PARAMETERS = "MISSING_PARAMETERS"
 }
 interface ErrorDetails {
     code: ErrorCode;
@@ -40,6 +46,12 @@ declare class BluefoxError extends Error {
     constructor(error: ErrorDetails);
     static validation(message: string, details?: Record<string, unknown>): BluefoxError;
     static rateLimit(reset: number): BluefoxError;
+    static duplicateEmail(email: string, details?: Record<string, unknown>): BluefoxError;
+    static invalidDate(message?: string, details?: Record<string, unknown>): BluefoxError;
+    static methodNotAllowed(message?: string, details?: Record<string, unknown>): BluefoxError;
+    static insufficientCredits(details?: Record<string, unknown>): BluefoxError;
+    static missingAwsConfig(details?: Record<string, unknown>): BluefoxError;
+    static missingParameters(message?: string, details?: Record<string, unknown>): BluefoxError;
 }
 interface BluefoxClientConfig {
     /** The API key for the Bluefox API */

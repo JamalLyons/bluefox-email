@@ -1,7 +1,3 @@
-/**
- * I made this type from reading the debug logs from testing.
- * Not 100% sure if this is accurate
- */
 export interface Subscriber {
   _id: string;
   accountId: string;
@@ -74,4 +70,74 @@ export interface ValidateWebhookOptions {
   request: Request;
   /** By default the API  */
   apiKeyOverride?: string;
+}
+
+/**
+ * Enum representing the different types of webhook events
+ */
+export enum WebhookEventType {
+  Sent = "sent",
+  Failed = "failed",
+  Click = "click",
+  Open = "open",
+  Bounce = "bounce",
+  Complaint = "complaint",
+  Subscribe = "subscribe",
+  Unsubscribe = "unsubscribe",
+  PauseSubscription = "pause-subscription",
+  Resubscribe = "resubscribe",
+}
+
+/**
+ * Interface representing a webhook event
+ */
+export interface WebhookEvent {
+  type: WebhookEventType | string;
+  account: {
+    name: string;
+    urlFriendlyName: string;
+    _id?: string;
+  };
+  project: {
+    name: string;
+    _id?: string;
+  };
+  createdAt: string;
+  emailData?: {
+    _id?: string;
+    sentAt: string;
+    to: string;
+    type: string;
+    subject: string;
+  };
+  userAgent?: string;
+  referer?: string;
+  ipAddress?: string;
+  errors?: any[];
+  blockPosition?: string;
+  blockName?: string;
+  link?: string;
+  subscription?: {
+    _id: string;
+    name: string;
+    email: string;
+    status: string;
+    subscriberList: {
+      name: string;
+      _id: string;
+      private: boolean | string;
+    };
+  };
+}
+
+/**
+ * Options for handling webhook events
+ */
+export interface HandleWebhookOptions {
+  request: Request;
+  apiKeyOverride?: string;
+  validApiKeys?: string[];
+  handlers?: {
+    [key in WebhookEventType | string]?: (event: WebhookEvent) => Promise<void>;
+  };
 }
