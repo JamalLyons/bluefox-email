@@ -374,8 +374,8 @@ class BluefoxEmail extends BluefoxModule {
    * @example
    * ```typescript
    * const result = await client.email.sendTriggered({
-   *   to: "john@example.com",
-   *   triggerId: "payment-reminder",
+   *   emails: ["john@example.com"],
+   *   triggeredId: "payment-reminder",
    *   data: { name: "John" }
    * });
    * if (result.ok) {
@@ -393,8 +393,8 @@ class BluefoxEmail extends BluefoxModule {
       path: "send-triggered",
       method: "POST",
       body: {
-        email: options.to,
-        triggerId: options.triggerId,
+        emails: options.emails,
+        triggeredId: options.triggeredId,
         data: options.data,
         attachments: options.attachments,
       },
@@ -442,13 +442,22 @@ class BluefoxEmail extends BluefoxModule {
 
     // Validate required fields
     this.validateRequiredFields({
-      to: options.to,
-      triggerId: options.triggerId,
+      emails: options.emails,
+      triggeredId: options.triggeredId,
     });
 
-    // Validate email format
+    // Validate that emails is an array and not empty
+    if (!Array.isArray(options.emails) || options.emails.length === 0) {
+      const error = BluefoxError.validation("Emails must be a non-empty array");
+      this.logError("EmailValidation.TriggeredOptions.Emails", error);
+      throw error;
+    }
+
+    // Validate email format for each email
     try {
-      this.validateEmail(options.to);
+      options.emails.forEach((email) => {
+        this.validateEmail(email);
+      });
     } catch (error) {
       this.logError("EmailValidation.TriggeredOptions.Email", error);
       throw error;

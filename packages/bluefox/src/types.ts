@@ -57,10 +57,10 @@ export interface SendTransactionalOptions {
 }
 
 export interface SendTriggeredOptions {
-  /** Recipient email address */
-  to: string;
-  /** ID of the transactional email template */
-  triggerId: string;
+  /** Recipient email addresses */
+  emails: string[];
+  /** ID of the triggered email template */
+  triggeredId: string;
   /** Data to merge into the email template */
   data?: Record<string, unknown>;
   /** Optional file attachments */

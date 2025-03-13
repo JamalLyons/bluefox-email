@@ -523,6 +523,13 @@ export abstract class BluefoxModule {
               status: response.status,
               details: errorData,
             });
+          } else if (errorMessage.includes("Triggered email not found")) {
+            return new BluefoxError({
+              code: ErrorCode.VALIDATION_ERROR,
+              message: errorMessage,
+              status: response.status,
+              details: errorData,
+            });
           }
           break;
         case "METHOD_NOT_ALLOWED":

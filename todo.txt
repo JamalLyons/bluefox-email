@@ -1,4 +1,1 @@
 - allow the request re-try logic to be disabled by the user. They can pass 0 and a fetch will be made only once always.
-- bluefox added the API response types to the docs, so we need to implement them correctly this time lol
-- change email type to a string array so users can send multiple emails in a 
-single bluefox request.
