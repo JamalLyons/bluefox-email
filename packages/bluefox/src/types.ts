@@ -26,3 +26,55 @@ export enum SubscriberStatus {
   Unsubscribed = "unsubscribed",
   Paused = "paused",
 }
+
+export interface EmailResponse {
+  id: string;
+  to: string;
+  subject: string;
+  status: EmailStatus;
+  sentAt?: string;
+  deliveredAt?: string;
+  openedAt?: string;
+  clickedAt?: string;
+}
+
+export enum EmailStatus {
+  Queued = "queued",
+  Sent = "sent",
+  Delivered = "delivered",
+  Failed = "failed",
+}
+
+export interface SendTransactionalOptions {
+  /** Recipient email address */
+  to: string;
+  /** ID of the transactional email template */
+  transactionalId: string;
+  /** Data to merge into the email template */
+  data?: Record<string, unknown>;
+  /** Optional file attachments */
+  attachments?: Array<{
+    fileName: string;
+    content: string;
+  }>;
+}
+
+export interface SendTriggeredOptions {
+  /** Recipient email address */
+  to: string;
+  /** ID of the transactional email template */
+  triggerId: string;
+  /** Data to merge into the email template */
+  data?: Record<string, unknown>;
+  /** Optional file attachments */
+  attachments?: Array<{
+    fileName: string;
+    content: string;
+  }>;
+}
+
+export interface ValidateWebhookOptions {
+  request: Request;
+  /** By default the API  */
+  apiKeyOverride?: string;
+}

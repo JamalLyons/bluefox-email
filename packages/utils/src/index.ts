@@ -220,3 +220,31 @@ export function ERROR(
     console.error(`[${name}] - ${format(error, 0, maxDepth)}`);
   }
 }
+
+/**
+ * Strips out any keys from the given object that have undefined values.
+ *
+ * @param {T} obj - The object from which to remove undefined keys.
+ *                  It can be of any type, as long as it is a record object.
+ * @returns {Partial<T>} A new object containing only the keys with defined values.
+ *
+ * @template T - The type of the input object, which extends Record<string, any>.
+ *
+ * @example
+ * const originalObject = {
+ *     name: "Alice",
+ *     age: undefined,
+ *     city: "Wonderland",
+ *     country: undefined,
+ * };
+ *
+ * const cleanedObject = stripUndefinedKeys(originalObject);
+ * console.log(cleanedObject); // Output: { name: "Alice", city: "Wonderland" }
+ */
+export function stripUndefinedKeys<T extends Record<string, unknown>>(
+  obj: T
+): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, value]) => value !== undefined)
+  ) as Partial<T>;
+}

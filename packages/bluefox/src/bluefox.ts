@@ -7,8 +7,17 @@ import {
   BluefoxError,
   BluefoxEndpoints,
   BluefoxClientConfig,
+  ErrorCode,
 } from "@bluefox-email/api";
-import { Subscriber, SubscriberList, SubscriberStatus } from "./types.js";
+import {
+  EmailResponse,
+  SendTransactionalOptions,
+  SendTriggeredOptions,
+  Subscriber,
+  SubscriberList,
+  SubscriberStatus,
+  ValidateWebhookOptions,
+} from "./types.js";
 
 /**
  * A client for the Bluefox.email API.
@@ -40,10 +49,16 @@ export class BluefoxClient extends BluefoxModule {
   public readonly subscriber: BluefoxSubscriber;
 
   /**
-   * Module for sending emails.
+   * Module for sending transactional and triggered emails.
    * @see https://bluefox.email/docs/api/send-transactional-email
    */
   public readonly email: BluefoxEmail;
+
+  /**
+   * Module for managing webhooks.
+   * @see https://bluefox.email/docs/integrations/webhooks
+   */
+  public readonly webhooks: BluefoxWebhooks;
 
   constructor(config: BluefoxClientConfig) {
     const context: BluefoxContext = {
@@ -56,6 +71,7 @@ export class BluefoxClient extends BluefoxModule {
 
     this.subscriber = new BluefoxSubscriber(context);
     this.email = new BluefoxEmail(context);
+    this.webhooks = new BluefoxWebhooks(context);
   }
 }
 
@@ -298,38 +314,6 @@ class BluefoxSubscriber extends BluefoxModule {
   }
 }
 
-export interface EmailResponse {
-  id: string;
-  to: string;
-  subject: string;
-  status: EmailStatus;
-  sentAt?: string;
-  deliveredAt?: string;
-  openedAt?: string;
-  clickedAt?: string;
-}
-
-export enum EmailStatus {
-  Queued = "queued",
-  Sent = "sent",
-  Delivered = "delivered",
-  Failed = "failed",
-}
-
-export interface SendTransactionalOptions {
-  /** Recipient email address */
-  to: string;
-  /** ID of the transactional email template */
-  transactionalId: string;
-  /** Data to merge into the email template */
-  data?: Record<string, unknown>;
-  /** Optional file attachments */
-  attachments?: Array<{
-    fileName: string;
-    content: string;
-  }>;
-}
-
 /**
  * Module for sending emails.
  */
@@ -379,6 +363,45 @@ class BluefoxEmail extends BluefoxModule {
     return result;
   }
 
+  /**
+   * Sends a triggered email.
+   *
+   * @param options - The options for sending the email
+   * @returns A promise that resolves to the email details
+   *
+   * @throws {BluefoxError} If validation fails or the request fails
+   *
+   * @example
+   * ```typescript
+   * const result = await client.email.sendTriggered({
+   *   to: "john@example.com",
+   *   triggerId: "payment-reminder",
+   *   data: { name: "John" }
+   * });
+   * if (result.ok) {
+   *   console.log("Email sent:", result.value.data);
+   * }
+   * ```
+   */
+  public async sendTriggered(options: SendTriggeredOptions) {
+    this.logDebug("SendTriggered.Input", options);
+    this.validateTriggeredOptions(options);
+
+    const result = await this.request<EmailResponse>({
+      path: "send-triggered",
+      method: "POST",
+      body: {
+        email: options.to,
+        triggerId: options.triggerId,
+        data: options.data,
+        arguments: options.attachments,
+      },
+    });
+
+    this.logDebug("SendTriggered.Result", result);
+    return result;
+  }
+
   private validateTransactionalOptions(
     options: SendTransactionalOptions
   ): void {
@@ -397,5 +420,63 @@ class BluefoxEmail extends BluefoxModule {
     if (options.attachments) {
       this.validateAttachments(options.attachments);
     }
+  }
+
+  private validateTriggeredOptions(options: SendTriggeredOptions): void {
+    this.logDebug("EmailValidation.TriggeredOptions", options);
+
+    // Validate required fields
+    this.validateRequiredFields({
+      to: options.to,
+      triggerId: options.triggerId,
+    });
+
+    // Validate email format
+    this.validateEmail(options.to);
+
+    // Validate attachments if present
+    if (options.attachments) {
+      this.validateAttachments(options.attachments);
+    }
+  }
+}
+
+class BluefoxWebhooks extends BluefoxModule {
+  constructor(context: BluefoxContext) {
+    super(context);
+  }
+
+  public async validateWebhook(
+    options: ValidateWebhookOptions
+  ): Promise<boolean> {
+    const API_KEY = options.apiKeyOverride || this.context.config.apiKey;
+    this.validateRequiredFields({
+      apiKey: API_KEY,
+      request: options.request,
+    });
+
+    const headerApiKey = options.request.headers
+      .get("Authorization")
+      ?.split(" ")[1]; // Removing "Bearer " prefix
+
+    if (!headerApiKey) {
+      throw new BluefoxError({
+        code: ErrorCode.SERVER_ERROR,
+        message: "No API key found in request headers",
+        status: 400,
+        details: { request: options.request },
+      });
+    }
+
+    if (API_KEY !== headerApiKey) {
+      throw new BluefoxError({
+        code: ErrorCode.AUTHENTICATION_ERROR,
+        message: "API keys do not match",
+        status: 400,
+        details: { request: options.request },
+      });
+    }
+
+    return true;
   }
 }

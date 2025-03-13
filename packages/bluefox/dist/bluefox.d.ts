@@ -21,6 +21,48 @@ interface SubscriberList {
     items: Subscriber[];
     count: number;
 }
+interface EmailResponse {
+    id: string;
+    to: string;
+    subject: string;
+    status: EmailStatus;
+    sentAt?: string;
+    deliveredAt?: string;
+    openedAt?: string;
+    clickedAt?: string;
+}
+declare enum EmailStatus {
+    Queued = "queued",
+    Sent = "sent",
+    Delivered = "delivered",
+    Failed = "failed"
+}
+interface SendTransactionalOptions {
+    /** Recipient email address */
+    to: string;
+    /** ID of the transactional email template */
+    transactionalId: string;
+    /** Data to merge into the email template */
+    data?: Record<string, unknown>;
+    /** Optional file attachments */
+    attachments?: Array<{
+        fileName: string;
+        content: string;
+    }>;
+}
+interface SendTriggeredOptions {
+    /** Recipient email address */
+    to: string;
+    /** ID of the transactional email template */
+    triggerId: string;
+    /** Data to merge into the email template */
+    data?: Record<string, unknown>;
+    /** Optional file attachments */
+    attachments?: Array<{
+        fileName: string;
+        content: string;
+    }>;
+}
 
 /**
  * A client for the Bluefox.email API.
@@ -143,35 +185,6 @@ declare class BluefoxSubscriber extends BluefoxModule {
     updateOne(subscriberListId: string, email: string, newEmail?: string, newName?: string): Promise<Result<HttpResponse<Subscriber>>>;
     private validateDate;
 }
-interface EmailResponse {
-    id: string;
-    to: string;
-    subject: string;
-    status: EmailStatus;
-    sentAt?: string;
-    deliveredAt?: string;
-    openedAt?: string;
-    clickedAt?: string;
-}
-declare enum EmailStatus {
-    Queued = "queued",
-    Sent = "sent",
-    Delivered = "delivered",
-    Failed = "failed"
-}
-interface SendTransactionalOptions {
-    /** Recipient email address */
-    to: string;
-    /** ID of the transactional email template */
-    transactionalId: string;
-    /** Data to merge into the email template */
-    data?: Record<string, unknown>;
-    /** Optional file attachments */
-    attachments?: Array<{
-        fileName: string;
-        content: string;
-    }>;
-}
 /**
  * Module for sending emails.
  */
@@ -198,7 +211,29 @@ declare class BluefoxEmail extends BluefoxModule {
      * ```
      */
     sendTransactional(options: SendTransactionalOptions): Promise<Result<HttpResponse<EmailResponse>>>;
+    /**
+     * Sends a triggered email.
+     *
+     * @param options - The options for sending the email
+     * @returns A promise that resolves to the email details
+     *
+     * @throws {BluefoxError} If validation fails or the request fails
+     *
+     * @example
+     * ```typescript
+     * const result = await client.email.sendTriggered({
+     *   to: "john@example.com",
+     *   triggerId: "payment-reminder",
+     *   data: { name: "John" }
+     * });
+     * if (result.ok) {
+     *   console.log("Email sent:", result.value.data);
+     * }
+     * ```
+     */
+    sendTriggered(options: SendTriggeredOptions): Promise<Result<HttpResponse<EmailResponse>>>;
     private validateTransactionalOptions;
+    private validateTriggeredOptions;
 }
 
-export { BluefoxClient, type EmailResponse, EmailStatus, type SendTransactionalOptions };
+export { BluefoxClient };

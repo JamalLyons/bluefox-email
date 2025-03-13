@@ -1,4 +1,4 @@
-import { DEBUG, ERROR } from "@bluefox-email/utils";
+import { DEBUG, ERROR, stripUndefinedKeys } from "@bluefox-email/utils";
 
 // HTTP Methods and Response Types
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -14,7 +14,7 @@ export interface RequestOptions {
   path: string;
   method: HttpMethod;
   headers?: Record<string, string>;
-  body?: unknown;
+  body: Record<string, unknown>;
   timeout?: number;
   retries?: number;
 }
@@ -240,7 +240,12 @@ export abstract class BluefoxModule {
     headers = {},
     body,
   }: RequestOptions): Promise<Result<HttpResponse<T>>> {
-    let options: RequestOptions = { path, method, headers, body };
+    let options: RequestOptions = {
+      path,
+      method,
+      headers,
+      body: stripUndefinedKeys(body),
+    };
 
     this.logDebug("Request", {
       url: `${this.context.baseUrl}/${path}`,

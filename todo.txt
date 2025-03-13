@@ -1,7 +1,4 @@
-- I need to find out what type of json response data each endpoint returns 
-so i can type that. I might have to do this manually but I want to ask the 
-bluefox team first before that...
-
 - allow the request re-try logic to be disabled by the user. They can pass 0 and a fetch will be made only once always.
-- test the library using real emails.
-- Make sure all return types are correct from bluefox
+- bluefox added the API response types to the docs, so we need to implement them correctly this time lol
+- change email type to a string array so users can send multiple emails in a 
+single bluefox request.

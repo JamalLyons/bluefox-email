@@ -9,7 +9,7 @@ interface RequestOptions {
     path: string;
     method: HttpMethod;
     headers?: Record<string, string>;
-    body?: unknown;
+    body?: Record<string, unknown>;
     timeout?: number;
     retries?: number;
 }

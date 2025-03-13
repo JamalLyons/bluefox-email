@@ -49,5 +49,26 @@ declare function DEBUG(name: string, data: any, maxDepth?: number): void;
  * @param maxDepth - Maximum recursion depth for nested objects (default: 5).
  */
 declare function ERROR(name: string, error: Error | unknown, maxDepth?: number): void;
+/**
+ * Strips out any keys from the given object that have undefined values.
+ *
+ * @param {T} obj - The object from which to remove undefined keys.
+ *                  It can be of any type, as long as it is a record object.
+ * @returns {Partial<T>} A new object containing only the keys with defined values.
+ *
+ * @template T - The type of the input object, which extends Record<string, any>.
+ *
+ * @example
+ * const originalObject = {
+ *     name: "Alice",
+ *     age: undefined,
+ *     city: "Wonderland",
+ *     country: undefined,
+ * };
+ *
+ * const cleanedObject = stripUndefinedKeys(originalObject);
+ * console.log(cleanedObject); // Output: { name: "Alice", city: "Wonderland" }
+ */
+declare function stripUndefinedKeys<T extends Record<string, unknown>>(obj: T): Partial<T>;
 
-export { DEBUG, ERROR };
+export { DEBUG, ERROR, stripUndefinedKeys };
