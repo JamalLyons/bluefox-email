@@ -135,38 +135,6 @@ async function handleWebhook(request: Request) {
 }
 ```
 
-### Testing Webhooks
-
-```typescript
-import { BluefoxClient, WebhookEventType } from "bluefox-email";
-
-const client = new BluefoxClient({
-  apiKey: "your-api-key",
-});
-
-// Test a webhook endpoint
-async function testWebhook() {
-  const result = await client.webhooks.testWebhook(
-    "https://your-webhook-url.com/webhooks/bluefox",
-    WebhookEventType.Open,
-    {
-      emailData: {
-        to: "test@example.com",
-        subject: "Test Email",
-        type: "transactional",
-        sentAt: new Date().toISOString(),
-      },
-    }
-  );
-
-  if (result.ok) {
-    console.log("Test webhook sent successfully");
-  } else {
-    console.error("Failed to send test webhook:", result.error.message);
-  }
-}
-```
-
 ## API Reference
 
 ### `validateWebhook(options)`
