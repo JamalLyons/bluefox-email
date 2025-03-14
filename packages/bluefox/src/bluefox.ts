@@ -801,47 +801,4 @@ class BluefoxWebhooks extends BluefoxModule {
   } {
     return event.type === WebhookEventType.Resubscribe;
   }
-
-  /**
-   * Tests a webhook by sending a test event to the specified URL
-   *
-   * @param webhookUrl - The URL to send the test event to
-   * @param eventType - The type of event to send
-   * @param customData - Custom data to include in the event
-   * @returns A promise that resolves to the response from the webhook URL
-   *
-   * @throws {BluefoxError} If the request fails
-   *
-   * @example
-   * ```typescript
-   * const result = await client.webhooks.testWebhook(
-   *   'https://example.com/webhooks/bluefox',
-   *   WebhookEventType.Open,
-   *   { emailData: { to: 'test@example.com' } }
-   * );
-   * if (result.ok) {
-   *   console.log('Test webhook sent successfully');
-   * }
-   * ```
-   */
-  public async testWebhook(
-    webhookUrl: string,
-    eventType: WebhookEventType | string,
-    customData?: Partial<WebhookEvent>
-  ): Promise<Result<HttpResponse<any>>> {
-    this.logDebug("TestWebhook.Input", { webhookUrl, eventType, customData });
-
-    const result = await this.request({
-      path: "test-webhook",
-      method: "POST",
-      body: {
-        webhookUrl,
-        eventType,
-        customData,
-      },
-    });
-
-    this.logDebug("TestWebhook.Result", result);
-    return result;
-  }
 }
