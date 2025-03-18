@@ -1,24 +1,36 @@
 {
   "name": "@bluefox-email/typescript-config",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": false,
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
-  "files": [
-    "base.json",
-    "LICENSE"
-  ],
-  "main": "./base.json",
-  "types": "./base.json",
+  "description": "Typescript config for bluefox packages",
   "keywords": [
     "bluefox",
     "typescript",
     "config"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JamalLyons/bluefox-email.git",
+    "directory": "packages/typescript-config"
+  },
+  "bugs": {
+    "url": "https://github.com/JamalLyons/bluefox-email/issues"
+  },
+  "license": "MIT",
+  "author": "Jamal Lyons",
+  "main": "./base.json",
+  "types": "./base.json",
+  "files": [
+    "base.json",
+    "LICENSE"
+  ],
+  "scripts": {},
   "dependencies": {
     "@types/node": "^22.13.9",
     "typescript": "5.8.2"
+  },
+  "devDependencies": {},
+  "publishConfig": {
+    "access": "public"
   }
 }

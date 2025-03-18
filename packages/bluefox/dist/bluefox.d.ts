@@ -500,29 +500,6 @@ declare class BluefoxWebhooks extends BluefoxModule {
         type: WebhookEventType.Resubscribe;
         subscription: NonNullable<WebhookEvent["subscription"]>;
     };
-    /**
-     * Tests a webhook by sending a test event to the specified URL
-     *
-     * @param webhookUrl - The URL to send the test event to
-     * @param eventType - The type of event to send
-     * @param customData - Custom data to include in the event
-     * @returns A promise that resolves to the response from the webhook URL
-     *
-     * @throws {BluefoxError} If the request fails
-     *
-     * @example
-     * ```typescript
-     * const result = await client.webhooks.testWebhook(
-     *   'https://example.com/webhooks/bluefox',
-     *   WebhookEventType.Open,
-     *   { emailData: { to: 'test@example.com' } }
-     * );
-     * if (result.ok) {
-     *   console.log('Test webhook sent successfully');
-     * }
-     * ```
-     */
-    testWebhook(webhookUrl: string, eventType: WebhookEventType | string, customData?: Partial<WebhookEvent>): Promise<Result<HttpResponse<any>>>;
 }
 
 export { BluefoxClient };

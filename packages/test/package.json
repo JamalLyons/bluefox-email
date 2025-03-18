@@ -21,7 +21,7 @@
   "packageManager": "pnpm@10.6.0",
   "dependencies": {
     "bluefox-email": "workspace:*",
-    "@bluefox-email/utils": "workspace:*"
+    "@bluefox-email/utils": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.9",

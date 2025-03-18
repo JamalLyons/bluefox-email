@@ -1,7 +1,7 @@
 {
   "name": "@bluefox-email/utils",
   "description": "Utility functions for the Bluefox email library",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": false,
   "license": "MIT",
   "type": "module",
@@ -50,7 +50,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@bluefox-email/typescript-config": "workspace:*",
+    "@bluefox-email/typescript-config": "0.1.0",
     "@types/node": "^22.13.9",
     "typescript": "5.8.2",
     "tsup": "^8.0.2",
