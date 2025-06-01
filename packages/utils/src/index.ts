@@ -53,7 +53,7 @@ export function DEBUG(name: string, data: any, maxDepth = 5): void {
       return `Map(${item.size}) {${[...item.entries()]
         .map(
           ([key, value]) =>
-            `${format(key, depth + 1)} => ${format(value, depth + 1)}`
+            `${format(key, depth + 1)} => ${format(value, depth + 1)}`,
         )
         .join(", ")}}`;
     }
@@ -96,12 +96,12 @@ export function DEBUG(name: string, data: any, maxDepth = 5): void {
     data
       .then((resolved) => {
         console.debug(
-          `[${name}] - [Promise Resolved]: ${format(resolved, 0, maxDepth)}`
+          `[${name}] - [Promise Resolved]: ${format(resolved, 0, maxDepth)}`,
         );
       })
       .catch((err) => {
         console.debug(
-          `[${name}] - [Promise Rejected]: ${format(err, 0, maxDepth)}`
+          `[${name}] - [Promise Rejected]: ${format(err, 0, maxDepth)}`,
         );
       });
     return;
@@ -139,7 +139,7 @@ export function DEBUG(name: string, data: any, maxDepth = 5): void {
 export function ERROR(
   name: string,
   error: Error | unknown,
-  maxDepth = 5
+  maxDepth = 5,
 ): void {
   const format = (item: any, depth: number, maxDepth = 5): string => {
     const seen = new WeakSet();
@@ -172,7 +172,7 @@ export function ERROR(
       return `Map(${item.size}) {${[...item.entries()]
         .map(
           ([key, value]) =>
-            `${format(key, depth + 1)} => ${format(value, depth + 1)}`
+            `${format(key, depth + 1)} => ${format(value, depth + 1)}`,
         )
         .join(", ")}}`;
     }
@@ -242,9 +242,9 @@ export function ERROR(
  * console.log(cleanedObject); // Output: { name: "Alice", city: "Wonderland" }
  */
 export function stripUndefinedKeys<T extends Record<string, unknown>>(
-  obj: T
+  obj: T,
 ): Partial<T> {
   return Object.fromEntries(
-    Object.entries(obj).filter(([_, value]) => value !== undefined)
+    Object.entries(obj).filter(([_, value]) => value !== undefined),
   ) as Partial<T>;
 }

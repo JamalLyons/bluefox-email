@@ -79,7 +79,7 @@ The Subscriber module allows you to manage subscriber lists, including adding, r
 const result = await client.subscriber.add(
   "list-123",
   "John Doe",
-  "john@example.com"
+  "john@example.com",
 );
 ```
 
@@ -145,7 +145,7 @@ if (result.ok) {
     case ErrorCode.RATE_LIMIT_ERROR:
       console.error(
         "Rate limit exceeded, retry after:",
-        new Date(error.details.reset)
+        new Date(error.details.reset),
       );
       break;
     default:

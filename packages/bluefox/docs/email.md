@@ -106,7 +106,7 @@ async function sendEmailWithAttachment() {
   } else {
     console.error(
       "Failed to send email with attachment:",
-      result.error.message
+      result.error.message,
     );
   }
 }

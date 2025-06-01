@@ -65,7 +65,7 @@ export class BluefoxError extends Error {
 
   static validation(
     message: string,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ): BluefoxError {
     return new BluefoxError({
       code: ErrorCode.VALIDATION_ERROR,
@@ -86,7 +86,7 @@ export class BluefoxError extends Error {
 
   static duplicateEmail(
     email: string,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ): BluefoxError {
     return new BluefoxError({
       code: ErrorCode.DUPLICATE_EMAIL,
@@ -98,7 +98,7 @@ export class BluefoxError extends Error {
 
   static invalidDate(
     message: string = "The pausedUntil date must be set in the future.",
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ): BluefoxError {
     return new BluefoxError({
       code: ErrorCode.INVALID_DATE,
@@ -110,7 +110,7 @@ export class BluefoxError extends Error {
 
   static methodNotAllowed(
     message: string = "The provided email has been flagged due to bouncing. If this is incorrect and the email is valid, please contact support.",
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ): BluefoxError {
     return new BluefoxError({
       code: ErrorCode.METHOD_NOT_ALLOWED,
@@ -140,7 +140,7 @@ export class BluefoxError extends Error {
 
   static missingParameters(
     message: string = "Missing required parameters: email and transactionalId.",
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ): BluefoxError {
     return new BluefoxError({
       code: ErrorCode.MISSING_PARAMETERS,
@@ -167,7 +167,7 @@ export interface BluefoxClientConfig {
   requestInterceptor?: (options: RequestOptions) => Promise<RequestOptions>;
   /** Custom response interceptor */
   responseInterceptor?: <T>(
-    response: HttpResponse<T>
+    response: HttpResponse<T>,
   ) => Promise<HttpResponse<T>>;
 }
 
@@ -187,7 +187,7 @@ export class RateLimiter {
     this.limit = parseInt(headers["x-ratelimit-limit"] || String(Infinity), 10);
     this.remaining = parseInt(
       headers["x-ratelimit-remaining"] || String(Infinity),
-      10
+      10,
     );
     this.reset = parseInt(headers["x-ratelimit-reset"] || "0", 10) * 1000;
   }
@@ -248,7 +248,7 @@ export abstract class BluefoxModule {
 
     if (missingFields.length > 0) {
       const error = BluefoxError.validation(
-        `Missing required fields: ${missingFields.join(", ")}`
+        `Missing required fields: ${missingFields.join(", ")}`,
       );
       this.logError("validateRequiredFields", error);
       throw error;
@@ -266,7 +266,7 @@ export abstract class BluefoxModule {
   }
 
   protected validateAttachments(
-    attachments: Array<{ fileName: string; content: string }>
+    attachments: Array<{ fileName: string; content: string }>,
   ): void {
     this.logDebug("EmailValidation.Attachments", {
       count: attachments.length,
@@ -282,14 +282,14 @@ export abstract class BluefoxModule {
     attachments.forEach((attachment, index) => {
       if (!attachment.fileName) {
         const error = BluefoxError.validation(
-          `Missing fileName for attachment at index ${index}`
+          `Missing fileName for attachment at index ${index}`,
         );
         this.logError("EmailValidation.Attachments", error);
         throw error;
       }
       if (!attachment.content) {
         const error = BluefoxError.validation(
-          `Missing content for attachment at index ${index}`
+          `Missing content for attachment at index ${index}`,
         );
         this.logError("EmailValidation.Attachments", error);
         throw error;
@@ -298,7 +298,7 @@ export abstract class BluefoxModule {
         atob(attachment.content);
       } catch {
         const error = BluefoxError.validation(
-          `Invalid base64 content for attachment ${attachment.fileName}`
+          `Invalid base64 content for attachment ${attachment.fileName}`,
         );
         this.logError("EmailValidation.Attachments", error);
         throw error;
@@ -360,7 +360,7 @@ export abstract class BluefoxModule {
   }
 
   private async executeRequest<T>(
-    options: RequestOptions
+    options: RequestOptions,
   ): Promise<Result<HttpResponse<T>>> {
     let attempt = 0;
     let lastError: BluefoxError | null = null;
@@ -420,12 +420,12 @@ export abstract class BluefoxModule {
   }
 
   private async performRequest<T>(
-    options: RequestOptions
+    options: RequestOptions,
   ): Promise<HttpResponse<T>> {
     const controller = new AbortController();
     const timeoutId = setTimeout(
       () => controller.abort(),
-      options.timeout || this.requestTimeout
+      options.timeout || this.requestTimeout,
     );
 
     try {
@@ -479,7 +479,7 @@ export abstract class BluefoxModule {
   }
 
   private async createErrorFromResponse(
-    response: Response
+    response: Response,
   ): Promise<BluefoxError> {
     let errorData;
     try {

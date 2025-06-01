@@ -20,7 +20,7 @@ describe("Subscriber Module Integration", () => {
     const result = await client.subscriber.add(
       "mock-list-id",
       "Test User",
-      "test@example.com"
+      "test@example.com",
     );
 
     expect(result.ok).toBe(true);
@@ -45,7 +45,7 @@ describe("Subscriber Module Integration", () => {
   it("should get a specific subscriber", async () => {
     const result = await client.subscriber.getOne(
       "mock-list-id",
-      "test@example.com"
+      "test@example.com",
     );
 
     expect(result.ok).toBe(true);
@@ -61,7 +61,7 @@ describe("Subscriber Module Integration", () => {
     const result = await client.subscriber.pause(
       "mock-list-id",
       "test@example.com",
-      pauseDate
+      pauseDate,
     );
 
     expect(result.ok).toBe(true);
@@ -74,7 +74,7 @@ describe("Subscriber Module Integration", () => {
   it("should activate a subscriber", async () => {
     const result = await client.subscriber.activate(
       "mock-list-id",
-      "test@example.com"
+      "test@example.com",
     );
 
     expect(result.ok).toBe(true);
@@ -86,7 +86,7 @@ describe("Subscriber Module Integration", () => {
   it("should remove a subscriber", async () => {
     const result = await client.subscriber.remove(
       "mock-list-id",
-      "test@example.com"
+      "test@example.com",
     );
 
     expect(result.ok).toBe(true);
@@ -99,7 +99,7 @@ describe("Subscriber Module Integration", () => {
     const result = await client.subscriber.add(
       "error-list", // This will trigger our error mock
       "Test User",
-      "test@example.com"
+      "test@example.com",
     );
 
     expect(result.ok).toBe(false);

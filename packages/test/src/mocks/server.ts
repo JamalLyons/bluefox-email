@@ -1,5 +1,6 @@
 import { http, HttpResponse, delay } from "msw";
 import { setupServer } from "msw/node";
+import { beforeAll, afterEach, afterAll } from "vitest";
 
 // Sample response data
 const mockSubscriber = {
@@ -32,7 +33,7 @@ export const handlers = [
     async () => {
       await delay(50); // Simulate network delay
       return HttpResponse.json(mockSubscriber, { status: 200 });
-    }
+    },
   ),
 
   http.get(
@@ -40,7 +41,7 @@ export const handlers = [
     async () => {
       await delay(50);
       return HttpResponse.json(mockSubscriberList, { status: 200 });
-    }
+    },
   ),
 
   http.get(
@@ -48,14 +49,14 @@ export const handlers = [
     async () => {
       await delay(50);
       return HttpResponse.json(mockSubscriber, { status: 200 });
-    }
+    },
   ),
 
   http.patch(
     "https://api.bluefox.email/v1/subscriber-lists/:listId/:email",
     async ({ request }) => {
       await delay(50);
-      const body = await request.json();
+      const body: any = await request.json();
 
       // Return different responses based on the status in the request
       const updatedSubscriber = {
@@ -67,7 +68,7 @@ export const handlers = [
       };
 
       return HttpResponse.json(updatedSubscriber, { status: 200 });
-    }
+    },
   ),
 
   // Email endpoints
@@ -99,9 +100,9 @@ export const handlers = [
             message: "Email already exists",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
-    }
+    },
   ),
 
   http.post(
@@ -115,9 +116,9 @@ export const handlers = [
             message: "Insufficient credits available.",
           },
         },
-        { status: 405 }
+        { status: 405 },
       );
-    }
+    },
   ),
 ];
 

@@ -36,7 +36,7 @@ async function addSubscriber() {
   const result = await client.subscriber.add(
     "list-123", // Subscriber list ID
     "John Doe", // Subscriber name
-    "john@example.com" // Subscriber email
+    "john@example.com", // Subscriber email
   );
 
   if (result.ok) {
@@ -53,7 +53,7 @@ async function addSubscriber() {
 async function removeSubscriber() {
   const result = await client.subscriber.remove(
     "list-123", // Subscriber list ID
-    "john@example.com" // Subscriber email
+    "john@example.com", // Subscriber email
   );
 
   if (result.ok) {
@@ -75,7 +75,7 @@ async function pauseSubscription() {
   const result = await client.subscriber.pause(
     "list-123", // Subscriber list ID
     "john@example.com", // Subscriber email
-    pauseUntil // Date until which the subscription should be paused
+    pauseUntil, // Date until which the subscription should be paused
   );
 
   if (result.ok) {
@@ -92,7 +92,7 @@ async function pauseSubscription() {
 async function activateSubscriber() {
   const result = await client.subscriber.activate(
     "list-123", // Subscriber list ID
-    "john@example.com" // Subscriber email
+    "john@example.com", // Subscriber email
   );
 
   if (result.ok) {
@@ -124,7 +124,7 @@ async function listSubscribers() {
 async function getSubscriber() {
   const result = await client.subscriber.getOne(
     "list-123", // Subscriber list ID
-    "john@example.com" // Subscriber email
+    "john@example.com", // Subscriber email
   );
 
   if (result.ok) {
@@ -143,7 +143,7 @@ async function updateSubscriber() {
     "list-123", // Subscriber list ID
     "john@example.com", // Current subscriber email
     "john.doe@example.com", // New email (optional)
-    "John A. Doe" // New name (optional)
+    "John A. Doe", // New name (optional)
   );
 
   if (result.ok) {
@@ -162,7 +162,7 @@ The Bluefox client uses a Result type for all API responses, which makes error h
 const result = await client.subscriber.add(
   "list-123",
   "John Doe",
-  "john@example.com"
+  "john@example.com",
 );
 
 if (result.ok) {
