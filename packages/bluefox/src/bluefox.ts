@@ -9,18 +9,137 @@ import {
   BluefoxClientConfig,
   ErrorCode,
 } from "@bluefox-email/api";
-import {
-  EmailResponse,
-  SendTransactionalOptions,
-  SendTriggeredOptions,
-  Subscriber,
-  SubscriberList,
-  SubscriberStatus,
-  ValidateWebhookOptions,
-  WebhookEvent,
-  WebhookEventType,
-  HandleWebhookOptions,
-} from "./types.js";
+
+export interface Subscriber {
+  _id: string;
+  accountId: string;
+  projectId: string;
+  subscriberListId: string;
+  name: string;
+  email: string;
+  status: SubscriberStatus;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  __v: number; // Version key
+  pausedUntil?: string; // Optional, ISO date string
+}
+
+export interface SubscriberList {
+  items: Subscriber[];
+  count: number;
+}
+
+export enum SubscriberStatus {
+  Active = "active",
+  Unsubscribed = "unsubscribed",
+  Paused = "paused",
+}
+
+export interface EmailResponse {
+  success: boolean;
+}
+
+export enum EmailStatus {
+  Queued = "queued",
+  Sent = "sent",
+  Delivered = "delivered",
+  Failed = "failed",
+}
+
+export interface SendTransactionalOptions {
+  /** Recipient email address */
+  to: string;
+  /** ID of the transactional email template */
+  transactionalId: string;
+  /** Data to merge into the email template */
+  data?: Record<string, unknown>;
+  /** Optional file attachments */
+  attachments?: Array<{
+    fileName: string;
+    content: string;
+  }>;
+}
+
+export interface SendTriggeredOptions {
+  /** Recipient email addresses */
+  emails: string[];
+  /** ID of the triggered email template */
+  triggeredId: string;
+  /** Data to merge into the email template */
+  data?: Record<string, unknown>;
+  /** Optional file attachments */
+  attachments?: Array<{
+    fileName: string;
+    content: string;
+  }>;
+}
+
+export interface ValidateWebhookOptions {
+  request: Request;
+  /** By default the API  */
+  apiKeyOverride?: string;
+}
+
+export enum WebhookEventType {
+  Sent = "sent",
+  Failed = "failed",
+  Click = "click",
+  Open = "open",
+  Bounce = "bounce",
+  Complaint = "complaint",
+  Subscribe = "subscribe",
+  Unsubscribe = "unsubscribe",
+  PauseSubscription = "pause-subscription",
+  Resubscribe = "resubscribe",
+}
+
+export interface WebhookEvent {
+  type: WebhookEventType | string;
+  account: {
+    name: string;
+    urlFriendlyName: string;
+    _id?: string;
+  };
+  project: {
+    name: string;
+    _id?: string;
+  };
+  createdAt: string;
+  emailData?: {
+    _id?: string;
+    sentAt: string;
+    to: string;
+    type: string;
+    subject: string;
+  };
+  userAgent?: string;
+  referer?: string;
+  ipAddress?: string;
+  errors?: any[];
+  blockPosition?: string;
+  blockName?: string;
+  link?: string;
+  subscription?: {
+    _id: string;
+    name: string;
+    email: string;
+    status: string;
+    subscriberList: {
+      name: string;
+      _id: string;
+      private: boolean | string;
+    };
+  };
+}
+
+export interface HandleWebhookOptions {
+  request: Request;
+  apiKeyOverride?: string;
+  validApiKeys?: string[];
+  handlers?: {
+    [key in WebhookEventType | string]?: (event: WebhookEvent) => Promise<void>;
+  };
+}
 
 /**
  * A client for the Bluefox.email API.
@@ -107,7 +226,7 @@ class BluefoxSubscriber extends BluefoxModule {
   public async add(
     subscriberListId: string,
     name: string,
-    email: string
+    email: string,
   ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberAdd.Input", { subscriberListId, name, email });
     this.validateRequiredFields({ subscriberListId, name, email });
@@ -134,7 +253,7 @@ class BluefoxSubscriber extends BluefoxModule {
    */
   public async remove(
     subscriberListId: string,
-    email: string
+    email: string,
   ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberRemove.Input", { subscriberListId, email });
     this.validateRequiredFields({ subscriberListId, email });
@@ -163,7 +282,7 @@ class BluefoxSubscriber extends BluefoxModule {
   public async pause(
     subscriberListId: string,
     email: string,
-    date: Date
+    date: Date,
   ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberPause.Input", { subscriberListId, email, date });
     this.validateRequiredFields({ subscriberListId, email });
@@ -194,7 +313,7 @@ class BluefoxSubscriber extends BluefoxModule {
    */
   public async activate(
     subscriberListId: string,
-    email: string
+    email: string,
   ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberActivate.Input", { subscriberListId, email });
     this.validateRequiredFields({ subscriberListId, email });
@@ -219,7 +338,7 @@ class BluefoxSubscriber extends BluefoxModule {
    * @throws {BluefoxError} If validation fails or the request fails
    */
   public async list(
-    subscriberListId: string
+    subscriberListId: string,
   ): Promise<Result<HttpResponse<SubscriberList>>> {
     this.logDebug("SubscriberList.input", { subscriberListId });
     this.validateRequiredFields({ subscriberListId });
@@ -244,7 +363,7 @@ class BluefoxSubscriber extends BluefoxModule {
    */
   public async getOne(
     subscriberListId: string,
-    email: string
+    email: string,
   ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberGetOne.input", { subscriberListId, email });
     this.validateRequiredFields({ subscriberListId, email });
@@ -271,7 +390,7 @@ class BluefoxSubscriber extends BluefoxModule {
     subscriberListId: string,
     email: string,
     newEmail?: string,
-    newName?: string
+    newName?: string,
   ): Promise<Result<HttpResponse<Subscriber>>> {
     this.logDebug("SubscriberUpdateOne.input", {
       subscriberListId,
@@ -346,7 +465,7 @@ class BluefoxEmail extends BluefoxModule {
    * ```
    */
   public async sendTransactional(
-    options: SendTransactionalOptions
+    options: SendTransactionalOptions,
   ): Promise<Result<HttpResponse<EmailResponse>>> {
     this.logDebug("SendTransactional.Input", options);
     this.validateTransactionalOptions(options);
@@ -387,7 +506,7 @@ class BluefoxEmail extends BluefoxModule {
    * ```
    */
   public async sendTriggered(
-    options: SendTriggeredOptions
+    options: SendTriggeredOptions,
   ): Promise<Result<HttpResponse<EmailResponse>>> {
     this.logDebug("SendTriggered.Input", options);
     this.validateTriggeredOptions(options);
@@ -408,7 +527,7 @@ class BluefoxEmail extends BluefoxModule {
   }
 
   private validateTransactionalOptions(
-    options: SendTransactionalOptions
+    options: SendTransactionalOptions,
   ): void {
     this.logDebug("EmailValidation.TransactionalOptions", options);
 
@@ -433,7 +552,7 @@ class BluefoxEmail extends BluefoxModule {
       } catch (error) {
         this.logError(
           "EmailValidation.TransactionalOptions.Attachments",
-          error
+          error,
         );
         throw error;
       }
@@ -500,7 +619,7 @@ class BluefoxWebhooks extends BluefoxModule {
    * ```
    */
   public async validateWebhook(
-    options: ValidateWebhookOptions & { validApiKeys?: string[] }
+    options: ValidateWebhookOptions & { validApiKeys?: string[] },
   ): Promise<boolean> {
     const primaryApiKey = options.apiKeyOverride || this.context.config.apiKey;
     const validApiKeys = options.validApiKeys || [primaryApiKey];
@@ -589,7 +708,7 @@ class BluefoxWebhooks extends BluefoxModule {
    * ```
    */
   public async handleWebhook(
-    options: HandleWebhookOptions
+    options: HandleWebhookOptions,
   ): Promise<WebhookEvent> {
     this.logDebug("WebhookHandler.Input", options);
 
@@ -679,7 +798,7 @@ class BluefoxWebhooks extends BluefoxModule {
    * ```
    */
   public isSentEvent(
-    event: WebhookEvent
+    event: WebhookEvent,
   ): event is WebhookEvent & { type: WebhookEventType.Sent } {
     return event.type === WebhookEventType.Sent;
   }
@@ -781,7 +900,7 @@ class BluefoxWebhooks extends BluefoxModule {
    * @returns True if the event is a pause subscription event
    */
   public isPauseSubscriptionEvent(
-    event: WebhookEvent
+    event: WebhookEvent,
   ): event is WebhookEvent & {
     type: WebhookEventType.PauseSubscription;
     subscription: NonNullable<WebhookEvent["subscription"]>;
