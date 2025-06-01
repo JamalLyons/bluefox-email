@@ -24,12 +24,12 @@ importers:
   packages/api:
     dependencies:
       '@bluefox-email/utils':
-        specifier: workspace:*
-        version: link:../utils
+        specifier: 0.1.0
+        version: 0.1.0
     devDependencies:
       '@bluefox-email/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
+        specifier: 0.1.0
+        version: 0.1.0
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.10
@@ -49,15 +49,15 @@ importers:
   packages/bluefox:
     dependencies:
       '@bluefox-email/api':
-        specifier: workspace:*
-        version: link:../api
+        specifier: 0.1.0
+        version: 0.1.0
       '@bluefox-email/utils':
-        specifier: workspace:*
-        version: link:../utils
+        specifier: 0.1.0
+        version: 0.1.0
     devDependencies:
       '@bluefox-email/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
+        specifier: 0.1.0
+        version: 0.1.0
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.10
@@ -77,15 +77,15 @@ importers:
   packages/convex:
     dependencies:
       '@bluefox-email/api':
-        specifier: workspace:*
-        version: link:../api
+        specifier: 0.1.0
+        version: 0.1.0
       '@bluefox-email/utils':
-        specifier: workspace:*
-        version: link:../utils
+        specifier: 0.1.0
+        version: 0.1.0
     devDependencies:
       '@bluefox-email/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
+        specifier: 0.1.0
+        version: 0.1.0
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.10
@@ -105,8 +105,8 @@ importers:
   packages/test:
     dependencies:
       '@bluefox-email/utils':
-        specifier: workspace:*
-        version: link:../utils
+        specifier: 0.1.0
+        version: 0.1.0
       bluefox-email:
         specifier: workspace:*
         version: link:../bluefox
@@ -145,8 +145,8 @@ importers:
   packages/utils:
     devDependencies:
       '@bluefox-email/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
+        specifier: 0.1.0
+        version: 0.1.0
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.10
@@ -193,6 +193,15 @@ packages:
   '@bcoe/v8-coverage@1.0.2':
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
+
+  '@bluefox-email/api@0.1.0':
+    resolution: {integrity: sha512-QMq3uHbcJe6iNw34JRpn8PWul3KcoOOIITiXG3pS2/cV7uYepDTKEXfbmWa0IcEZ6GE/ffaCh927AUc7CwpJYw==}
+
+  '@bluefox-email/typescript-config@0.1.0':
+    resolution: {integrity: sha512-LIv/NKEi6l4+MDA+APhLK8bWIdwIoT/4AF9WhoeGMbddxEhlAW8iOnwmEI5DYdbAXCuy1ZwDLBrfCD8dME6q4g==}
+
+  '@bluefox-email/utils@0.1.0':
+    resolution: {integrity: sha512-SY+WPgHVzYr5MPW0i5+EIgu8+5ZI8E1oumAFSvkpG6Ia1Y0kJvpoYJrqojO2n0IXqDtykuBoj4JwFgdTVDxjyQ==}
 
   '@bundled-es-modules/cookie@2.0.1':
     resolution: {integrity: sha512-8o+5fRPLNbjbdGRRmJj3h6Hh1AQJf2dk3qQ/5ZFb+PXkRNiSoMGGUKlsgLfrxneb72axVJyIYji64E2+nNfYyw==}
@@ -1883,6 +1892,17 @@ snapshots:
       '@babel/helper-validator-identifier': 7.25.9
 
   '@bcoe/v8-coverage@1.0.2': {}
+
+  '@bluefox-email/api@0.1.0':
+    dependencies:
+      '@bluefox-email/utils': 0.1.0
+
+  '@bluefox-email/typescript-config@0.1.0':
+    dependencies:
+      '@types/node': 22.13.10
+      typescript: 5.8.2
+
+  '@bluefox-email/utils@0.1.0': {}
 
   '@bundled-es-modules/cookie@2.0.1':
     dependencies:
