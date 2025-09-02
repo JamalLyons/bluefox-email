@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import { BluefoxClient } from "bluefox-email";
-import { setupMockServer } from "../mocks/server";
+import { setupMockServer } from "../mocks/server.js";
 
 // Setup the mock server for all tests in this file
 setupMockServer();

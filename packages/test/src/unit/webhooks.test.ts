@@ -87,7 +87,7 @@ describe("Webhooks Module", () => {
 
       const result = await client.webhooks.validateWebhook({
         request: mockRequest,
-        validApiKeys: ["primary-key", "secondary-key"],
+        rotationApiKeys: ["primary-key", "secondary-key"],
       });
 
       expect(result).toBe(true);
@@ -128,9 +128,24 @@ describe("Webhooks Module", () => {
 
   describe("Type Guards", () => {
     it("should correctly identify email events", () => {
-      const openEvent = { type: WebhookEventType.Open };
-      const clickEvent = { type: WebhookEventType.Click };
-      const subscribeEvent = { type: WebhookEventType.Subscribe };
+      const openEvent = { 
+        type: WebhookEventType.Open,
+        account: { name: "Test", urlFriendlyName: "test" },
+        project: { name: "Test", _id: "123" },
+        createdAt: new Date().toISOString()
+      } as any;
+      const clickEvent = { 
+        type: WebhookEventType.Click,
+        account: { name: "Test", urlFriendlyName: "test" },
+        project: { name: "Test", _id: "123" },
+        createdAt: new Date().toISOString()
+      } as any;
+      const subscribeEvent = { 
+        type: WebhookEventType.Subscribe,
+        account: { name: "Test", urlFriendlyName: "test" },
+        project: { name: "Test", _id: "123" },
+        createdAt: new Date().toISOString()
+      } as any;
 
       expect(client.webhooks.isEmailEvent(openEvent)).toBe(true);
       expect(client.webhooks.isEmailEvent(clickEvent)).toBe(true);
@@ -138,9 +153,24 @@ describe("Webhooks Module", () => {
     });
 
     it("should correctly identify subscription events", () => {
-      const subscribeEvent = { type: WebhookEventType.Subscribe };
-      const unsubscribeEvent = { type: WebhookEventType.Unsubscribe };
-      const openEvent = { type: WebhookEventType.Open };
+      const subscribeEvent = { 
+        type: WebhookEventType.Subscribe,
+        account: { name: "Test", urlFriendlyName: "test" },
+        project: { name: "Test", _id: "123" },
+        createdAt: new Date().toISOString()
+      } as any;
+      const unsubscribeEvent = { 
+        type: WebhookEventType.Unsubscribe,
+        account: { name: "Test", urlFriendlyName: "test" },
+        project: { name: "Test", _id: "123" },
+        createdAt: new Date().toISOString()
+      } as any;
+      const openEvent = { 
+        type: WebhookEventType.Open,
+        account: { name: "Test", urlFriendlyName: "test" },
+        project: { name: "Test", _id: "123" },
+        createdAt: new Date().toISOString()
+      } as any;
 
       expect(client.webhooks.isSubscriptionEvent(subscribeEvent)).toBe(true);
       expect(client.webhooks.isSubscriptionEvent(unsubscribeEvent)).toBe(true);
@@ -151,7 +181,10 @@ describe("Webhooks Module", () => {
       const clickEvent = {
         type: WebhookEventType.Click,
         link: "https://example.com",
-      };
+        account: { name: "Test", urlFriendlyName: "test" },
+        project: { name: "Test", _id: "123" },
+        createdAt: new Date().toISOString()
+      } as any;
 
       expect(client.webhooks.isClickEvent(clickEvent)).toBe(true);
       expect(client.webhooks.isOpenEvent(clickEvent)).toBe(false);

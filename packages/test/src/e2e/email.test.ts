@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll } from "vitest";
 import { BluefoxClient } from "bluefox-email";
 import { getEnv } from "../utils.js";
 

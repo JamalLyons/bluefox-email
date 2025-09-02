@@ -48,11 +48,7 @@ declare function DEBUG(name: string, data: any, maxDepth?: number): void;
  * @param error - The error to log. Can be an Error instance or any other type.
  * @param maxDepth - Maximum recursion depth for nested objects (default: 5).
  */
-declare function ERROR(
-  name: string,
-  error: Error | unknown,
-  maxDepth?: number,
-): void;
+declare function ERROR(name: string, error: Error | unknown, maxDepth?: number): void;
 /**
  * Strips out any keys from the given object that have undefined values.
  *
@@ -73,8 +69,6 @@ declare function ERROR(
  * const cleanedObject = stripUndefinedKeys(originalObject);
  * console.log(cleanedObject); // Output: { name: "Alice", city: "Wonderland" }
  */
-declare function stripUndefinedKeys<T extends Record<string, unknown>>(
-  obj: T,
-): Partial<T>;
+declare function stripUndefinedKeys<T extends Record<string, unknown>>(obj: T): Partial<T>;
 
 export { DEBUG, ERROR, stripUndefinedKeys };
