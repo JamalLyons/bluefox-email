@@ -60,10 +60,6 @@ interface SendTriggeredOptions {
 interface ValidateWebhookOptions {
     request: Request;
     /**
-     * Override the primary API key. This key takes precedence over the rotationApiKeys and the client config.
-     */
-    apiKeyOverride?: string;
-    /**
      * Additional API keys that can also be used to validate the webhook.
      *
      * This can be useful for key rotation without downtime.
@@ -122,7 +118,6 @@ interface WebhookEvent {
 }
 interface HandleWebhookOptions {
     request: Request;
-    apiKeyOverride?: string;
     rotationApiKeys?: string[];
     handlers?: {
         [key in WebhookEventType | string]?: (event: WebhookEvent) => Promise<void>;
@@ -322,9 +317,7 @@ declare class BluefoxWebhooks extends BluefoxModule {
      * });
      * ```
      */
-    validateWebhook(options: ValidateWebhookOptions & {
-        rotationApiKeys?: string[];
-    }): Promise<boolean>;
+    validateWebhook(options: ValidateWebhookOptions): Promise<boolean>;
     /**
      * Parses a webhook request into a WebhookEvent object
      *

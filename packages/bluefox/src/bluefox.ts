@@ -76,10 +76,6 @@ export interface SendTriggeredOptions {
 
 export interface ValidateWebhookOptions {
   request: Request;
-  /**
-   * Override the primary API key. This key takes precedence over the rotationApiKeys and the client config.
-   */
-  apiKeyOverride?: string;
   /** 
    * Additional API keys that can also be used to validate the webhook. 
    * 
@@ -142,7 +138,6 @@ export interface WebhookEvent {
 
 export interface HandleWebhookOptions {
   request: Request;
-  apiKeyOverride?: string;
   rotationApiKeys?: string[];
   handlers?: {
     [key in WebhookEventType | string]?: (event: WebhookEvent) => Promise<void>;
@@ -627,14 +622,13 @@ class BluefoxWebhooks extends BluefoxModule {
    * ```
    */
   public async validateWebhook(
-    options: ValidateWebhookOptions & { rotationApiKeys?: string[] },
+    options: ValidateWebhookOptions,
   ): Promise<boolean> {
-    const validApiKeys = options.apiKeyOverride 
-      ? [options.apiKeyOverride]
-      : [
-          this.context.config.apiKey,
-          ...(options.rotationApiKeys || []).filter(key => key && key.trim() !== '')
-        ].filter(key => key && key.trim() !== '');
+    const validApiKeys =
+      [
+        this.context.config.apiKey,
+        ...(options.rotationApiKeys || []),
+      ].filter(key => key && key.trim() !== '');
 
     this.validateRequiredFields({
       apiKey: validApiKeys[0],
@@ -727,7 +721,6 @@ class BluefoxWebhooks extends BluefoxModule {
     // Validate the webhook first
     await this.validateWebhook({
       request: options.request,
-      apiKeyOverride: options.apiKeyOverride,
       rotationApiKeys: options.rotationApiKeys,
     });
 

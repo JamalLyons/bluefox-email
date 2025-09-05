@@ -45,7 +45,7 @@ async function handleWebhook(request: Request) {
     // Validate the webhook
     await client.webhooks.validateWebhook({
       request,
-      validApiKeys: ["primary-key", "secondary-key"], // Support for key rotation
+      rotationApiKeys: ["primary-key", "secondary-key"], // Support for key rotation
     });
 
     // Parse the event
@@ -78,7 +78,7 @@ async function handleWebhook(request: Request) {
     // Handle the webhook with specific handlers for each event type
     await client.webhooks.handleWebhook({
       request,
-      validApiKeys: ["primary-key", "secondary-key"],
+      rotationApiKeys: ["primary-key", "secondary-key"],
       handlers: {
         [WebhookEventType.Open]: async (event) => {
           console.log(`Email opened by ${event.emailData?.to}`);
@@ -145,7 +145,7 @@ Validates a webhook request by checking the API key in the Authorization header.
 
 - `options.request`: The webhook request
 - `options.apiKeyOverride`: Optional override for the API key
-- `options.validApiKeys`: Optional array of valid API keys for key rotation
+- `options.rotationApiKeys`: Optional array of additional API keys for key rotation
 
 **Returns:**
 
@@ -171,7 +171,7 @@ Handles a webhook request by validating it, parsing the event, and calling the a
 
 - `options.request`: The webhook request
 - `options.apiKeyOverride`: Optional override for the API key
-- `options.validApiKeys`: Optional array of valid API keys for key rotation
+- `options.rotationApiKeys`: Optional array of additional API keys for key rotation
 - `options.handlers`: Optional object mapping event types to handler functions
 
 **Returns:**
