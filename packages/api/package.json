@@ -1,7 +1,7 @@
 {
   "name": "@bluefox-email/api",
   "description": "API for the bluefox email library",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "license": "MIT",
   "type": "module",
@@ -49,7 +49,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@bluefox-email/utils": "0.1.0"
+    "@bluefox-email/utils": "0.1.1"
   },
   "devDependencies": {
     "@bluefox-email/typescript-config": "0.1.0",
