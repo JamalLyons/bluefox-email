@@ -24,8 +24,8 @@ importers:
   packages/api:
     dependencies:
       '@bluefox-email/utils':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: workspace:*
+        version: link:../utils
     devDependencies:
       '@bluefox-email/typescript-config':
         specifier: 0.1.0
@@ -49,11 +49,11 @@ importers:
   packages/bluefox:
     dependencies:
       '@bluefox-email/api':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: workspace:*
+        version: link:../api
       '@bluefox-email/utils':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: workspace:*
+        version: link:../utils
     devDependencies:
       '@bluefox-email/typescript-config':
         specifier: 0.1.0

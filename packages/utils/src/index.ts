@@ -244,7 +244,22 @@ export function ERROR(
 export function stripUndefinedKeys<T extends Record<string, unknown>>(
   obj: T,
 ): Partial<T> {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([_, value]) => value !== undefined),
-  ) as Partial<T>;
+  const result: Record<string, unknown> = {};
+
+  // Use for...in loop with direct property assignment instead of Object.fromEntries()
+  // This ensures arrays (like emails: string[]) are preserved as arrays and not
+  // converted to objects with numeric keys (e.g., { "0": "email1", "1": "email2" }).
+  // The previous implementation using Object.fromEntries() could cause this conversion
+  // in certain edge cases, leading to CastError on the Bluefox backend.
+  // This approach works identically for normal objects while preserving array types.
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (value !== undefined) {
+        result[key] = value;
+      }
+    }
+  }
+
+  return result as Partial<T>;
 }

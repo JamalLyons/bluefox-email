@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:unit": "vitest run --dir src/unit",
-    "test:integration": "vitest run --dir src/integration",
-    "test:e2e": "RUN_E2E_TESTS=true vitest run --dir src/e2e",
+    "test:unit": "vitest run src/unit",
+    "test:integration": "vitest run src/integration",
+    "test:e2e": "RUN_E2E_TESTS=true vitest run src/e2e",
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --reporter=json --outputFile=./test-results.json"
   },

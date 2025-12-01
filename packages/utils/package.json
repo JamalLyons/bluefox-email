@@ -1,7 +1,7 @@
 {
   "name": "@bluefox-email/utils",
   "description": "Utility functions for the Bluefox email library",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "license": "MIT",
   "type": "module",
