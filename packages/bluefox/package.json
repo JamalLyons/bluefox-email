@@ -49,8 +49,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@bluefox-email/api": "0.1.0",
-    "@bluefox-email/utils": "0.1.0"
+    "@bluefox-email/api": "workspace:*",
+    "@bluefox-email/utils": "workspace:*"
   },
   "devDependencies": {
     "@bluefox-email/typescript-config": "0.1.0",
