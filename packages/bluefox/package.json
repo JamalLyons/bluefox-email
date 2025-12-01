@@ -1,7 +1,7 @@
 {
   "name": "bluefox-email",
   "description": "Send beautiful emails using Bluefox.email",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": false,
   "license": "MIT",
   "type": "module",
@@ -49,8 +49,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@bluefox-email/api": "workspace:*",
-    "@bluefox-email/utils": "workspace:*"
+    "@bluefox-email/api": "0.1.2",
+    "@bluefox-email/utils": "0.1.1"
   },
   "devDependencies": {
     "@bluefox-email/typescript-config": "0.1.0",
